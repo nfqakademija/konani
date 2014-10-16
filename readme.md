@@ -4,6 +4,6 @@ Member: Andrius
 
 Member: Karolis Narkevičius
 
-Member: Eveldas
+Member: Evaldas
 
 Type: Startup
