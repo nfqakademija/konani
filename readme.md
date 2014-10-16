@@ -2,7 +2,7 @@ Project name: Konani
 
 Member: Andrius
 
-Member: Karolis
+Member: Karolis Narkevičius
 
 Member: Eveldas
 
