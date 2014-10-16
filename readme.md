@@ -1,9 +1,9 @@
 Project name: Konani
 
-Member: Andrius
+Member: Andrius Nikulinas
 
-Member: Karolis
+Member: Karolis Naraškevičius
 
-Member: Eveldas
+Member: Evaldas Kocys
 
 Type: Startup
