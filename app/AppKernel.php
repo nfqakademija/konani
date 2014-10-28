@@ -18,6 +18,7 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new Konani\UserBundle\KonaniUserBundle(),
             new Konani\AdminBundle\KonaniAdminBundle(),
+            new Konani\VideoBundle\KonaniVideoBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
