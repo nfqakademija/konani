@@ -1,0 +1,4 @@
+konani_user:
+    resource: "@KonaniUserBundle/Resources/config/routing.yml"
+    prefix:   /
+
