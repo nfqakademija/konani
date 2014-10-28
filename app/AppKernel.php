@@ -19,6 +19,7 @@ class AppKernel extends Kernel
             new Konani\UserBundle\KonaniUserBundle(),
             new Konani\AdminBundle\KonaniAdminBundle(),
             new Konani\VideoBundle\KonaniVideoBundle(),
+            new Konani\CartBundle\KonaniCartBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

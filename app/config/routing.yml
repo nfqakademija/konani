@@ -1,3 +1,7 @@
+konani_cart:
+    resource: "@KonaniCartBundle/Resources/config/routing.yml"
+    prefix:   /
+
 konani_video:
     resource: "@KonaniVideoBundle/Resources/config/routing.yml"
     prefix:   /

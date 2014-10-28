@@ -1,0 +1,3 @@
+konani_cart_homepage:
+    path:     /hello_cart/{name}
+    defaults: { _controller: KonaniCartBundle:Default:index }
