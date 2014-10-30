@@ -125,27 +125,4 @@ class CartVideo
     {
         return $this->cart;
     }
-
-    /**
-     * Set video
-     *
-     * @param \Konani\CartBundle\Entity\Video $video
-     * @return CartVideo
-     */
-    public function setVideo(\Konani\CartBundle\Entity\Video $video = null)
-    {
-        $this->video = $video;
-
-        return $this;
-    }
-
-    /**
-     * Get video
-     *
-     * @return \Konani\CartBundle\Entity\Video 
-     */
-    public function getVideo()
-    {
-        return $this->video;
-    }
 }

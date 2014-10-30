@@ -262,37 +262,4 @@ class User
     {
         return $this->carts;
     }
-
-    /**
-     * Add videos
-     *
-     * @param \Konani\UserBundle\Entity\Video $videos
-     * @return User
-     */
-    public function addVideo(\Konani\UserBundle\Entity\Video $videos)
-    {
-        $this->videos[] = $videos;
-
-        return $this;
-    }
-
-    /**
-     * Remove videos
-     *
-     * @param \Konani\UserBundle\Entity\Video $videos
-     */
-    public function removeVideo(\Konani\UserBundle\Entity\Video $videos)
-    {
-        $this->videos->removeElement($videos);
-    }
-
-    /**
-     * Get videos
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getVideos()
-    {
-        return $this->videos;
-    }
 }
