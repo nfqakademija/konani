@@ -1,3 +1,7 @@
+frontend:
+    resource: "@FrontendBundle/Resources/config/routing.yml"
+    prefix:   /
+
 konani_cart:
     resource: "@KonaniCartBundle/Resources/config/routing.yml"
     prefix:   /
