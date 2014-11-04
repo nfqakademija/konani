@@ -1,7 +1,7 @@
 Konani
 ======
 
-{<img src="https://scrutinizer-ci.com/g/nfqakademija/konani/badges/quality-score.png?b=master" alt="Scrutinizer Code Quality" />}[https://scrutinizer-ci.com/g/nfqakademija/konani/?branch=master]
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/nfqakademija/konani/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/nfqakademija/konani/?branch=master)
 
 Symfony Standard Edition
 ========================
