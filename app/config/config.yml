@@ -37,10 +37,37 @@ assetic:
     #java: /usr/bin/java
     filters:
         cssrewrite: ~
+        #cssembed:
+        #    jar: %kernel.root_dir%/Resources/java/cssembed-0.4.5.jar
+        #yui_js:
+        #    jar: %kernel.root_dir%/Resources/java/yuicompressor-2.4.8.jar
+        #lessphp:
+        #    file: %kernel.root_dir%/../vendor/leafo/lessphp/lessc.inc.php
+        #    apply_to: "\.less$"
         #closure:
         #    jar: "%kernel.root_dir%/Resources/java/compiler.jar"
-        #yui_css:
-        #    jar: "%kernel.root_dir%/Resources/java/yuicompressor-2.4.7.jar"
+    assets:
+        jquery_and_ui_js:
+            inputs:
+                - '%kernel.root_dir%/../vendor/components/jquery/jquery.min.js'
+                - '%kernel.root_dir%/../vendor/components/jqueryui/jquery-ui.min.js'
+        #    filters: [?yui_js]
+        jqueryui_css:
+            inputs:
+                - '%kernel.root_dir%/../vendor/components/jqueryui/themes/base/*'
+        #    filters: [cssembed]
+        bootstrap_js:
+            inputs:
+                - '%kernel.root_dir%/../vendor/components/bootstrap/js/bootstrap.min.js'
+        #    filters: [?yui_js]
+        bootstrap_css:
+            inputs:
+                - '%kernel.root_dir%/../vendor/components/bootstrap/css/bootstrap.min.css'
+        #    filters: [cssembed]
+        #bootstrap_less:
+        #    inputs:
+        #        - '%kernel.root_dir%/../vendor/twitter/bootstrap/less/bootstrap.less'
+        #    filters: [lessphp,cssembed]
 
 # Doctrine Configuration
 doctrine:
@@ -70,3 +97,8 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: Konani\UserBundle\Entity\User

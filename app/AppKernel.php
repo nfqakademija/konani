@@ -21,6 +21,7 @@ class AppKernel extends Kernel
             new Konani\VideoBundle\KonaniVideoBundle(),
             new Konani\CartBundle\KonaniCartBundle(),
             new Konani\FrontendBundle\FrontendBundle(),
+            new FOS\UserBundle\FOSUserBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

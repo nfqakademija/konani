@@ -36,13 +36,13 @@ class CartVideo
     private $videoId;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Cart", inversedBy="videos")
+     * @ORM\ManyToOne(targetEntity="\Konani\CartBundle\Entity\Cart", inversedBy="videos")
      * @ORM\JoinColumn(name="cart_id", referencedColumnName="id")
      */
     protected $cart;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Video", inversedBy="subscriptions")
+     * @ORM\ManyToOne(targetEntity="\Konani\VideoBundle\Entity\Video", inversedBy="subscriptions")
      * @ORM\JoinColumn(name="video_id", referencedColumnName="id")
      */
     protected $video;
@@ -129,10 +129,10 @@ class CartVideo
     /**
      * Set video
      *
-     * @param \Konani\CartBundle\Entity\Video $video
+     * @param \Konani\VideoBundle\Entity\Video $video
      * @return CartVideo
      */
-    public function setVideo(\Konani\CartBundle\Entity\Video $video = null)
+    public function setVideo(\Konani\VideoBundle\Entity\Video $video = null)
     {
         $this->video = $video;
 
@@ -142,7 +142,7 @@ class CartVideo
     /**
      * Get video
      *
-     * @return \Konani\CartBundle\Entity\Video 
+     * @return \Konani\VideoBundle\Entity\Video
      */
     public function getVideo()
     {

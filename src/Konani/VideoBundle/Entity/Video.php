@@ -86,13 +86,13 @@ class Video
     private $thumbnailUrl;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="videos")
+     * @ORM\ManyToOne(targetEntity="\Konani\UserBundle\Entity\User", inversedBy="videos")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     protected $user;
 
     /**
-     * @ORM\OneToMany(targetEntity="CartVideo", mappedBy="video")
+     * @ORM\OneToMany(targetEntity="\Konani\CartBundle\Entity\CartVideo", mappedBy="video")
      */
     protected $subscriptions;
 
@@ -322,10 +322,10 @@ class Video
     /**
      * Set user
      *
-     * @param \Konani\VideoBundle\Entity\User $user
+     * @param \Konani\UserBundle\Entity\User $user
      * @return Video
      */
-    public function setUser(\Konani\VideoBundle\Entity\User $user = null)
+    public function setUser(\Konani\UserBundle\Entity\User $user = null)
     {
         $this->user = $user;
 
@@ -335,7 +335,7 @@ class Video
     /**
      * Get user
      *
-     * @return \Konani\VideoBundle\Entity\User 
+     * @return \Konani\UserBundle\Entity\User
      */
     public function getUser()
     {
@@ -345,10 +345,10 @@ class Video
     /**
      * Add subscriptions
      *
-     * @param \Konani\VideoBundle\Entity\CartVideo $subscriptions
+     * @param \Konani\CartBundle\Entity\CartVideo $subscriptions
      * @return Video
      */
-    public function addSubscription(\Konani\VideoBundle\Entity\CartVideo $subscriptions)
+    public function addSubscription(\Konani\CartBundle\Entity\CartVideo $subscriptions)
     {
         $this->subscriptions[] = $subscriptions;
 
@@ -358,9 +358,9 @@ class Video
     /**
      * Remove subscriptions
      *
-     * @param \Konani\VideoBundle\Entity\CartVideo $subscriptions
+     * @param \Konani\CartBundle\Entity\CartVideo $subscriptions
      */
-    public function removeSubscription(\Konani\VideoBundle\Entity\CartVideo $subscriptions)
+    public function removeSubscription(\Konani\CartBundle\Entity\CartVideo $subscriptions)
     {
         $this->subscriptions->removeElement($subscriptions);
     }

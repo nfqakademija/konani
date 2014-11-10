@@ -2,16 +2,17 @@
 
 namespace Konani\UserBundle\Entity;
 
+use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * User
  *
- * @ORM\Table()
+ * @ORM\Table(name="fos_user")
  * @ORM\Entity(repositoryClass="Konani\UserBundle\Entity\UserRepository")
  */
-class User
+class User extends BaseUser
 {
     /**
      * @var integer
@@ -20,72 +21,45 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=64)
+     * @ORM\Column(name="name", type="string", length=64, nullable=true)
      */
     private $name;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="surename", type="string", length=64)
+     * @ORM\Column(name="surename", type="string", length=64, nullable=true)
      */
     private $surename;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="username", type="string", length=32)
-     */
-    private $username;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="password", type="string", length=255)
-     */
-    private $password;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="email", type="string", length=255)
-     */
-    private $email;
-
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="is_active", type="boolean")
-     */
-    private $isActive;
-
-
-    /**
-     * @ORM\OneToMany(targetEntity="Cart", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="\Konani\CartBundle\Entity\Cart", mappedBy="user")
      */
     protected $carts;
 
     /**
-     * @ORM\OneToMany(targetEntity="Video", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="\Konani\VideoBundle\Entity\Video", mappedBy="user")
      */
     protected $videos;
 
+
     public function __construct()
     {
+        parent::__construct();
         $this->carts = new ArrayCollection();
         $this->videos = new ArrayCollection();
     }
 
-
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -108,7 +82,7 @@ class User
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -131,7 +105,7 @@ class User
     /**
      * Get surename
      *
-     * @return string 
+     * @return string
      */
     public function getSurename()
     {
@@ -139,104 +113,12 @@ class User
     }
 
     /**
-     * Set username
-     *
-     * @param string $username
-     * @return User
-     */
-    public function setUsername($username)
-    {
-        $this->username = $username;
-
-        return $this;
-    }
-
-    /**
-     * Get username
-     *
-     * @return string 
-     */
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-    /**
-     * Set password
-     *
-     * @param string $password
-     * @return User
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    /**
-     * Get password
-     *
-     * @return string 
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * Set email
-     *
-     * @param string $email
-     * @return User
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * Get email
-     *
-     * @return string 
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * Set isActive
-     *
-     * @param boolean $isActive
-     * @return User
-     */
-    public function setIsActive($isActive)
-    {
-        $this->isActive = $isActive;
-
-        return $this;
-    }
-
-    /**
-     * Get isActive
-     *
-     * @return boolean 
-     */
-    public function getIsActive()
-    {
-        return $this->isActive;
-    }
-
-    /**
      * Add carts
      *
-     * @param \Konani\UserBundle\Entity\Cart $carts
+     * @param \Konani\CartBundle\Entity\Cart $carts
      * @return User
      */
-    public function addCart(\Konani\UserBundle\Entity\Cart $carts)
+    public function addCart(\Konani\CartBundle\Entity\Cart $carts)
     {
         $this->carts[] = $carts;
 
@@ -246,9 +128,9 @@ class User
     /**
      * Remove carts
      *
-     * @param \Konani\UserBundle\Entity\Cart $carts
+     * @param \Konani\CartBundle\Entity\Cart $carts
      */
-    public function removeCart(\Konani\UserBundle\Entity\Cart $carts)
+    public function removeCart(\Konani\CartBundle\Entity\Cart $carts)
     {
         $this->carts->removeElement($carts);
     }
@@ -256,7 +138,7 @@ class User
     /**
      * Get carts
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getCarts()
     {
@@ -266,10 +148,10 @@ class User
     /**
      * Add videos
      *
-     * @param \Konani\UserBundle\Entity\Video $videos
+     * @param \Konani\VideoBundle\Entity\Video $videos
      * @return User
      */
-    public function addVideo(\Konani\UserBundle\Entity\Video $videos)
+    public function addVideo(\Konani\VideoBundle\Entity\Video $videos)
     {
         $this->videos[] = $videos;
 
@@ -279,9 +161,9 @@ class User
     /**
      * Remove videos
      *
-     * @param \Konani\UserBundle\Entity\Video $videos
+     * @param \Konani\VideoBundle\Entity\Video $videos
      */
-    public function removeVideo(\Konani\UserBundle\Entity\Video $videos)
+    public function removeVideo(\Konani\VideoBundle\Entity\Video $videos)
     {
         $this->videos->removeElement($videos);
     }
@@ -289,7 +171,7 @@ class User
     /**
      * Get videos
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getVideos()
     {

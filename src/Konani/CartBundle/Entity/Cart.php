@@ -62,7 +62,7 @@ class Cart
     }
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="carts")
+     * @ORM\ManyToOne(targetEntity="\Konani\UserBundle\Entity\User", inversedBy="carts")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     protected $user;
@@ -205,10 +205,10 @@ class Cart
     /**
      * Set user
      *
-     * @param \Konani\CartBundle\Entity\User $user
+     * @param \Konani\UserBundle\Entity\User $user
      * @return Cart
      */
-    public function setUser(\Konani\CartBundle\Entity\User $user = null)
+    public function setUser(\Konani\UserBundle\Entity\User $user = null)
     {
         $this->user = $user;
 
@@ -218,7 +218,7 @@ class Cart
     /**
      * Get user
      *
-     * @return \Konani\CartBundle\Entity\User 
+     * @return \Konani\UserBundle\Entity\User
      */
     public function getUser()
     {

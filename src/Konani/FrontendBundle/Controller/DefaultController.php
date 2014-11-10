@@ -6,13 +6,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class DefaultController extends Controller
 {
-    public function indexAction($name,$test)
+    public function indexAction()
     {
         return $this->render('FrontendBundle:Default:index.html.twig',
-            array(
-                'name' => $name,
-                'test' => $test
-            )
+            array()
         );
     }
 }

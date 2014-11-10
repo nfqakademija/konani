@@ -2,12 +2,22 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
+        <title>{% block title %}Konani Video Geotagging{% endblock %}</title>
+        {% block stylesheets %}
+            {% stylesheets '@jqueryui_css' '@bootstrap_css' combine=true %}
+                <link href="{{ asset_url }}" type="text/css" rel="stylesheet">
+            {% endstylesheets %}
+        {% endblock %}
+        {% javascripts '@jquery_and_ui_js' '@bootstrap_js' combine=true %}
+            <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
+        <div class="container-fluid">
+            {% block body %}{% endblock %}
+            {% block javascripts %}{% endblock %}
+        </div>
     </body>
 </html>
