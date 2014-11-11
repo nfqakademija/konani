@@ -1,23 +1,32 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8" />
-        <title>{% block title %}Konani Video Geotagging{% endblock %}</title>
-        {% block stylesheets %}
-            {% stylesheets '@jqueryui_css' '@bootstrap_css' combine=true %}
-                <link href="{{ asset_url }}" type="text/css" rel="stylesheet">
-            {% endstylesheets %}
-        {% endblock %}
-        {% javascripts '@jquery_and_ui_js' '@bootstrap_js' combine=true %}
-            <script src="{{ asset_url }}"></script>
-        {% endjavascripts %}
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Konani Video Geotagging{% endblock %}</title>
+    {% block stylesheets %}
+        {% stylesheets '@jqueryui_css' '@bootstrap_css' combine=true %}
+        <link href="{{ asset_url }}" type="text/css" rel="stylesheet">
+        {% endstylesheets %}
+    {% endblock %}
+    {% javascripts '@jquery_and_ui_js' '@bootstrap_js' combine=true %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
 
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-    </head>
-    <body>
-        <div class="container-fluid">
-            {% block body %}{% endblock %}
-            {% block javascripts %}{% endblock %}
-        </div>
-    </body>
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+</head>
+<body>
+<div class="container-fluid">
+    {% include 'header.html.twig' %}
+    {% for type, messages in app.session.flashbag.all() %}
+        {% for message in messages %}
+            <div class="flash-{{ type }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% block body %}{% endblock %}
+    {% include 'footer.html.twig' %}
+</div>
+{% block javascripts %}{% endblock %}
+</body>
 </html>
