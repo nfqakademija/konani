@@ -7,6 +7,7 @@
         {% stylesheets '@jqueryui_css' '@bootstrap_css' combine=true %}
         <link href="{{ asset_url }}" type="text/css" rel="stylesheet">
         {% endstylesheets %}
+        <link href="{{ asset('bundles/frontend/styles/styles.css') }}" type="text/css" rel="stylesheet">
     {% endblock %}
     {% javascripts '@jquery_and_ui_js' '@bootstrap_js' combine=true %}
     <script src="{{ asset_url }}"></script>
@@ -25,8 +26,8 @@
         {% endfor %}
     {% endfor %}
     {% block body %}{% endblock %}
-    {% include 'footer.html.twig' %}
 </div>
+{% include 'footer.html.twig' %}
 {% block javascripts %}{% endblock %}
 </body>
 </html>
