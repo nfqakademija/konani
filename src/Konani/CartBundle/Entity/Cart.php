@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Cart
  *
- * @ORM\Table()
+ * @ORM\Table(name="cart")
  * @ORM\Entity(repositoryClass="Konani\CartBundle\Entity\CartRepository")
  */
 class Cart

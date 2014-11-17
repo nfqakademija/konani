@@ -23,7 +23,8 @@
         "components/jqueryui": "dev-master",
         "components/bootstrap": "dev-master",
 
-        "friendsofsymfony/user-bundle": "2.0.*@dev"
+        "friendsofsymfony/user-bundle": "2.0.*@dev",
+        "google/apiclient": "1.0.6-beta"
 
     },
     "require-dev": {

@@ -12,6 +12,7 @@
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
                 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                    <li><a href="{{ path('konani_add_video') }}">Add Video</a></li>
                     <li><a href="{{ path('fos_user_profile_show') }}">User Details</a></li>
                     <li><a href="{{ path('fos_user_security_logout') }}">Log Out</a></li>
                 {% else %}

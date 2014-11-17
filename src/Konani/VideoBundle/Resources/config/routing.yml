@@ -1,3 +1,3 @@
-konani_video_homepage:
-    path:     /hello_video/{name}
-    defaults: { _controller: KonaniVideoBundle:Default:index }
+konani_add_video:
+    path:     /add_video/
+    defaults: { _controller: KonaniVideoBundle:Default:addVideo }

@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * CartVideo
  *
- * @ORM\Table()
+ * @ORM\Table(name="cart_video")
  * @ORM\Entity(repositoryClass="Konani\CartBundle\Entity\CartVideoRepository")
  */
 class CartVideo

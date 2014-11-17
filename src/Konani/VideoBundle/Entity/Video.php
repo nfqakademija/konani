@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Video
  *
- * @ORM\Table()
+ * @ORM\Table(name="video")
  * @ORM\Entity(repositoryClass="Konani\VideoBundle\Entity\VideoRepository")
  */
 class Video
