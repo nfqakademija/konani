@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <title>{% block title %}Konani Video Geotagging{% endblock %}</title>
     {% block stylesheets %}
-        {% stylesheets '@jqueryui_css' '@bootstrap_css' combine=true %}
+        {% stylesheets '@jqueryui_css' '@bootstrap_css' %}
         <link href="{{ asset_url }}" type="text/css" rel="stylesheet">
         {% endstylesheets %}
         <link href="{{ asset('bundles/frontend/styles/styles.css') }}" type="text/css" rel="stylesheet">
     {% endblock %}
-    {% javascripts '@jquery_and_ui_js' '@bootstrap_js' combine=true %}
+    {% javascripts '@jquery_and_ui_js' '@bootstrap_js' %}
     <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
 

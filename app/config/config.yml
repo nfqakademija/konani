@@ -36,6 +36,11 @@ assetic:
     bundles:        [ ]
     #java: /usr/bin/java
     filters:
+        less:
+        #   bin:  /usr/bin/less
+            node: /usr/bin/node
+            node_paths: [/usr/lib/node_modules/]
+            apply_to: "\.less$"
         cssrewrite: ~
         #cssembed:
         #    jar: %kernel.root_dir%/Resources/java/cssembed-0.4.5.jar
@@ -64,10 +69,13 @@ assetic:
             inputs:
                 - '%kernel.root_dir%/../vendor/components/bootstrap/css/bootstrap.min.css'
         #    filters: [cssembed]
+        #bootstrap_js:
+        #    inputs:
+        #        - '%kernel.root_dir%/../vendor/twbs/bootstrap/js/*.js'
         #bootstrap_less:
         #    inputs:
-        #        - '%kernel.root_dir%/../vendor/twitter/bootstrap/less/bootstrap.less'
-        #    filters: [lessphp,cssembed]
+        #        - '%kernel.root_dir%/../vendor/twbs/bootstrap/less/bootstrap.less'
+        #    filters: [less]
 
 # Doctrine Configuration
 doctrine:
@@ -102,3 +110,7 @@ fos_user:
     db_driver: orm
     firewall_name: main
     user_class: Konani\UserBundle\Entity\User
+
+parameters:
+    google.client_id: 280501061710-2j8epiob932fvtd68srqsireedlm2fsa.apps.googleusercontent.com
+    google.client_secret: cuGHDBZ3LH6CURbVJs6XP-GE
