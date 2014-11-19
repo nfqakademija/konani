@@ -1,4 +1,8 @@
 /web/bundles/
+/web/css/
+/web/js/
+/web/fonts/
+/web/img/
 /app/bootstrap.php.cache
 /app/cache/*
 /app/config/parameters.yml
@@ -9,6 +13,9 @@
 /vendor/
 /bin/
 /composer.phar
+/node_modules/
+/bower_components/
+/.sass-cache/
 .idea
 .vagrant
 npm-debug.log

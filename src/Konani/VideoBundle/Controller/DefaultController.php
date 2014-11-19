@@ -6,7 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Google_Client;
 use Google_Service_YouTube;
-
+use Google_Service_Exception;
+use Google_Exception;
 
 class DefaultController extends Controller
 {
@@ -24,7 +25,7 @@ class DefaultController extends Controller
             FILTER_SANITIZE_URL);
         $client->setRedirectUri($redirect);
 
-        $youtube = new Google_Service_YouTube($client);
+        //$youtube = new Google_Service_YouTube($client);
 
         $code = $this->get('request')->get('code');
         if ($code) {
@@ -46,7 +47,7 @@ class DefaultController extends Controller
         if ($client->getAccessToken()) {
             try {
                 $snippet = new Google_Service_YouTube_VideoSnippet();
-            } catch (Google_ServiceException $e) {
+            } catch (Google_Service_Exception $e) {
                 $htmlBody .= sprintf('<p>A service error occurred: <code>%s</code></p>',
                     htmlspecialchars($e->getMessage()));
             } catch (Google_Exception $e) {

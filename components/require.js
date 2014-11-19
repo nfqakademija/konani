@@ -2020,10 +2020,6 @@ var requirejs, require, define;
 var components = {
     "packages": [
         {
-            "name": "bootstrap",
-            "main": "bootstrap-built.js"
-        },
-        {
             "name": "jquery",
             "main": "jquery-built.js"
         },
@@ -2033,11 +2029,6 @@ var components = {
         }
     ],
     "shim": {
-        "bootstrap": {
-            "deps": [
-                "jquery"
-            ]
-        },
         "jquery-ui": {
             "deps": [
                 "jquery"

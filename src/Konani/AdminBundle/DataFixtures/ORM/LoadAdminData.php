@@ -22,7 +22,7 @@ class LoadAdminData implements FixtureInterface{
         $admin->setUsername('admin');
         $admin->setEmail('admin@admin.lt');
         $admin->setPassword('admin');
-        $admin->setIsActive('1');
+        $admin->setIsActive(true);
 
         $manager->persist($admin);
         $manager->flush();
