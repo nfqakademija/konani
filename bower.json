@@ -1,0 +1,19 @@
+{
+  "name": "konani",
+  "version": "0.0.0",
+  "homepage": "https://github.com/nfqakademija/konani",
+  "authors": [
+    "Karolis Narkevicius <karois699@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-sass-official": "*"
+  }
+}
