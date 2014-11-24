@@ -15,7 +15,7 @@ use Google_Service_YouTube_Video;
 use Google_Http_MediaFileUpload;
 
 
-class DefaultController extends Controller
+class VideoController extends Controller
 {
     public function addVideoAction()
     {

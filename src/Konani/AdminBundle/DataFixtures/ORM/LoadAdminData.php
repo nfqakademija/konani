@@ -21,7 +21,7 @@ class LoadAdminData implements FixtureInterface{
         $admin->setSurename('admin');
         $admin->setUsername('admin');
         $admin->setEmail('admin@admin.lt');
-        $admin->setPassword('admin');
+        $admin->setPlainPassword('admin');
         $admin->setIsActive(true);
 
         $manager->persist($admin);
