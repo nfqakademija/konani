@@ -14,10 +14,42 @@ use Google_Service_YouTube_VideoStatus;
 use Google_Service_YouTube_Video;
 use Google_Http_MediaFileUpload;
 
+use Konani\VideoBundle\Form\Type\VideoType;
 
+use Symfony\Component\HttpFoundation\Request;
+
+
+/**
+ * Controls videos actions - add new, edit, delete, upload, upload to youtube...
+ *
+ * Class VideoController
+ * @package Konani\VideoBundle\Controller
+ */
 class VideoController extends Controller
 {
-    public function addVideoAction()
+    /**
+     * New video upload form
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function newAction(Request $request)
+    {
+        $video = new VideoType();
+
+        $form = $this->createForm(new VideoType());
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+
+        }
+
+        return $this->render('KonaniVideoBundle:Default:addVideo.html.twig', array(
+                'form' => $form->createView(),
+            ));
+    }
+
+    public function uploadToYoutubeAction()
     {
         $OAUTH2_CLIENT_ID = $this->container->getParameter('google.client_id');
         $OAUTH2_CLIENT_SECRET = $this->container->getParameter('google.client_secret');
@@ -112,7 +144,7 @@ class VideoController extends Controller
 
             // Reikia pirma useriui funkcijos - susikurti youtube cahnneli, paskuj uploadinti
 
-            } catch (Google_ServiceException $e) {
+            } catch (Google_Service_Exception $e) {
                 $htmlBody .= sprintf('<p>A service error occurred: <code>%s</code></p>',
                     htmlspecialchars($e->getMessage()));
             } catch (Google_Exception $e) {
@@ -132,6 +164,6 @@ class VideoController extends Controller
               <p>You need to <a href='".$authUrl."'>authorize access</a> before proceeding.<p>";
         }
 
-        return $this->render('KonaniVideoBundle:Default:addVideo.html.twig', array( 'html' => $htmlBody));
+        return $this->render('KonaniVideoBundle:Default:uploadVideo.html.twig', array( 'html' => $htmlBody));
     }
 }

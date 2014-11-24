@@ -1,0 +1,27 @@
+{% extends 'form_div_layout.html.twig' %}
+
+{% block form_errors %}
+    {% spaceless %}
+        {% if errors|length > 0 %}
+            <ul>
+                {% for error in errors %}
+                    <li class="alert alert-danger" role="alert">{{ error.message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endspaceless %}
+{% endblock form_errors %}
+
+{% block form_row %}
+<div class="form_row">
+    <div class="form-group">
+        {{ form_label(form) }}
+        {{ form_errors(form) }}
+        {{ form_widget(form, { 'attr': {'class': 'form-control'} }) }}
+    </div>
+</div>
+{% endblock form_row %}
+
+{% block submit_widget %}
+    {{ form_widget(form, { 'attr': {'class': 'btn btn-default'} }) }}
+{% endblock submit_widget %}

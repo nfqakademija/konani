@@ -8,7 +8,7 @@ konani_cart:
 
 konani_video:
     resource: "@KonaniVideoBundle/Resources/config/routing.yml"
-    prefix:   /
+    prefix:   /video/
 
 konani_admin:
     resource: "@KonaniAdminBundle/Resources/config/routing.yml"

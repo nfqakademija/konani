@@ -1,3 +1,7 @@
-konani_add_video:
-    path:     /add_video/
-    defaults: { _controller: KonaniVideoBundle:Video:addVideo }
+video_new:
+    path:     /new/
+    defaults: { _controller: KonaniVideoBundle:Video:new }
+
+video_upload_to_youtube:
+    path:     /upload_to_youtube/
+    defaults: { _controller: KonaniVideoBundle:Video:uploadToYoutube }

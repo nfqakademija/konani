@@ -28,6 +28,9 @@ framework:
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
+    form:
+        resources:
+            - 'FrontendBundle:Form:fields.html.twig'
 
 # Doctrine Configuration
 doctrine:
