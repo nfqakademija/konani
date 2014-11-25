@@ -1,0 +1,5 @@
+Konani\VideoBundle\Entity\File:
+    properties:
+        file:
+            - File:
+                maxSize: 6000000

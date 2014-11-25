@@ -1,0 +1,32 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <h1>My Uploaded Videos</h1>
+    <a class="btn btn-default" href="{{ path('video_upload') }}" >
+        <span class="glyphicon glyphicon-hd-video" aria-hidden="true"></span> Upload video
+    </a>
+    <br><br>
+
+    {% if videos is defined %}
+        <table class="table">
+            <tr>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        {% for video in videos %}
+            <tr>
+                <td>{{ video.name }}</td>
+                <td>
+                    <a class="btn btn-default btn-sm" href="{{ path('video_upload_to_youtube', {'id': video.id}) }}" >
+                        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Tag video
+                    </a>
+                    <a class="btn btn-danger btn-sm" href="{{ path('video_delete_uploaded', {'id': video.id}) }}" >
+                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete video
+                    </a>
+                </td>
+            </tr>
+
+        {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}

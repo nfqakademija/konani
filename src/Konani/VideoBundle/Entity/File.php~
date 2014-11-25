@@ -248,27 +248,4 @@ class File
         // when displaying uploaded doc/image in the view.
         return 'uploads';
     }
-
-    /**
-     * Set user
-     *
-     * @param \Konani\UserBundle\Entity\User $user
-     * @return File
-     */
-    public function setUser(\Konani\UserBundle\Entity\User $user = null)
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
-     * Get user
-     *
-     * @return \Konani\UserBundle\Entity\User 
-     */
-    public function getUser()
-    {
-        return $this->user;
-    }
 }

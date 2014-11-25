@@ -14,10 +14,11 @@ use Google_Service_YouTube_VideoStatus;
 use Google_Service_YouTube_Video;
 use Google_Http_MediaFileUpload;
 
-use Konani\VideoBundle\Form\Type\VideoType;
+use Konani\VideoBundle\Form\Type\UploadVideoType;
+
+use Konani\VideoBundle\Entity\File;
 
 use Symfony\Component\HttpFoundation\Request;
-
 
 /**
  * Controls videos actions - add new, edit, delete, upload, upload to youtube...
@@ -32,22 +33,77 @@ class VideoController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function newAction(Request $request)
+    public function uploadAction(Request $request)
     {
-        $form = $this->createForm(new VideoType());
+        $file = new File();
+
+        $form = $this->createFormBuilder($file)
+            ->add('name')
+            ->add('file')
+            ->add('save','submit')
+            ->getForm();
 
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
 
+            $file->setUser($this->getUser());
+
+            $em->persist($file);
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('video_uploaded'));
         }
 
-        return $this->render('KonaniVideoBundle:Default:addVideo.html.twig', array(
+        return $this->render('KonaniVideoBundle:Default:upload.html.twig', array(
                 'form' => $form->createView(),
             ));
     }
 
-    public function uploadToYoutubeAction()
+    /**
+     * Lists all user uploaded locally videos
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function uploadedAction()
+    {
+        $videos = $this->getDoctrine()
+            ->getRepository('KonaniVideoBundle:File')
+            ->findByUser($this->getUser());
+
+        if (!$videos) {
+            throw $this->createNotFoundException(
+                'No videos found for user '.$this->getUser()->getUsername()
+            );
+        }
+
+
+        return $this->render('KonaniVideoBundle:Default:uploaded.html.twig', array(
+                'videos' => $videos
+            ));
+    }
+
+    public function deleteUploadedAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $file = $this->getDoctrine()
+            ->getRepository('KonaniVideoBundle:File')
+            ->find($id);
+
+        if (!$file) {
+            throw $this->createNotFoundException(
+                'No video found for id '.$id
+            );
+        }
+
+        $em->remove($file);
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('video_uploaded'));
+    }
+    public function uploadToYoutubeAction($id)
     {
         $OAUTH2_CLIENT_ID = $this->container->getParameter('google.client_id');
         $OAUTH2_CLIENT_SECRET = $this->container->getParameter('google.client_secret');
@@ -85,8 +141,17 @@ class VideoController extends Controller
 
         if ($client->getAccessToken()) {
             try{
-                // REPLACE with the path to your file that you want to upload
-                $videoPath = __DIR__.'/../../../../web/uploads/snbd.mp4';
+                // File path
+                $file = $this->getDoctrine()
+                    ->getRepository('KonaniVideoBundle:File')
+                    ->find($id);
+
+                if (!$file) {
+                    throw $this->createNotFoundException(
+                        'No video found for id '.$id
+                    );
+                }
+                $videoPath = $file->getAbsolutePath(); // __DIR__.'/../../../../web/uploads/snbd.mp4';
 
                 // Create a snipet with title, description, tags and category id
                 $snippet = new Google_Service_YouTube_VideoSnippet();
@@ -162,6 +227,6 @@ class VideoController extends Controller
               <p>You need to <a href='".$authUrl."'>authorize access</a> before proceeding.<p>";
         }
 
-        return $this->render('KonaniVideoBundle:Default:uploadVideo.html.twig', array( 'html' => $htmlBody));
+        return $this->render('KonaniVideoBundle:Default:uploadToYoutube.html.twig', array( 'html' => $htmlBody));
     }
 }

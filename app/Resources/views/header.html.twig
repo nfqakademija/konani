@@ -16,10 +16,10 @@
             <ul class="nav navbar-nav navbar-right">
                 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                     <li>
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Tag Video <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Videos <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="{{ path('video_new') }}">New Video</a></li>
-                            <li><a href="{{ path('video_upload_to_youtube') }}">Existing Video</a></li>
+                            <li><a href="{{ path('video_upload') }}">Upload New</a></li>
+                            <li><a href="{{ path('video_uploaded') }}">Uploaded List</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
