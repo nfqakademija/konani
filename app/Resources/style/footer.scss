@@ -1,0 +1,38 @@
+//footer
+
+.footer {
+  border-top:solid 1px #bababa;
+  background: #ebebeb;
+  padding: 10px;
+}
+
+.hr-separator {
+  height:1px;
+  width:300px;
+  background-color:#bababa;
+  margin:0 auto;
+  margin-bottom:10px;
+}
+
+.footer p {
+  text-align: center;
+}
+
+.icons {
+
+  text-align: center;
+
+  a {
+    color:#777777;
+    margin-left:10px;
+    background-image: ulr('https://cdn2.iconfinder.com/data/icons/New-Social-Media-Icon-Set-V11/256/facebook.png');
+    height: 50px;
+    width: 50px;
+  }
+  a:hover {
+    text-decoration: none;
+    color:#0d73b5;
+    cursor:pointer;
+  }
+
+}
