@@ -48,12 +48,18 @@ class User extends BaseUser
      */
     protected $videos;
 
+    /**
+     * @ORM\OneToMany(targetEntity="\Konani\VideoBundle\Entity\File", mappedBy="user")
+     */
+    protected $files;
+
 
     public function __construct()
     {
         parent::__construct();
         $this->carts = new ArrayCollection();
         $this->videos = new ArrayCollection();
+        $this->files = new ArrayCollection();
     }
 
     /**
