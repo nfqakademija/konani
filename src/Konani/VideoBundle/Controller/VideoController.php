@@ -34,8 +34,6 @@ class VideoController extends Controller
      */
     public function newAction(Request $request)
     {
-        $video = new VideoType();
-
         $form = $this->createForm(new VideoType());
 
         $form->handleRequest($request);
@@ -88,7 +86,7 @@ class VideoController extends Controller
         if ($client->getAccessToken()) {
             try{
                 // REPLACE with the path to your file that you want to upload
-                $videoPath = __DIR__.'/../../../../web/uploads/GOPR0036.MP4';
+                $videoPath = __DIR__.'/../../../../web/uploads/snbd.mp4';
 
                 // Create a snipet with title, description, tags and category id
                 $snippet = new Google_Service_YouTube_VideoSnippet();
