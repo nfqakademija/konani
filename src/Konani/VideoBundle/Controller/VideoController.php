@@ -14,8 +14,8 @@ use Google_Service_YouTube_VideoStatus;
 use Google_Service_YouTube_Video;
 use Google_Http_MediaFileUpload;
 
-use Konani\VideoBundle\Form\Type\UploadVideoType;
 
+use Konani\UserBundle\Entity\User;
 use Konani\VideoBundle\Entity\File;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -37,6 +37,10 @@ class VideoController extends Controller
     {
         $file = new File();
 
+        $user = $this->getDoctrine()
+            ->getRepository('KonaniUserBundle:User')
+            ->find($this->getUser()->getId());
+
         $form = $this->createFormBuilder($file)
             ->add('name')
             ->add('file')
@@ -48,7 +52,7 @@ class VideoController extends Controller
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
 
-            $file->setUser($this->getUser());
+            $file->setUser($user);
 
             $em->persist($file);
             $em->flush();
@@ -70,14 +74,13 @@ class VideoController extends Controller
     {
         $videos = $this->getDoctrine()
             ->getRepository('KonaniVideoBundle:File')
-            ->findByUser($this->getUser());
+            ->findBy(array("userId"=>$this->getUser()->getId()));
 
         if (!$videos) {
             throw $this->createNotFoundException(
                 'No videos found for user '.$this->getUser()->getUsername()
             );
         }
-
 
         return $this->render('KonaniVideoBundle:Default:uploaded.html.twig', array(
                 'videos' => $videos
