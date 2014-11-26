@@ -12,12 +12,6 @@ body {
   /* Margin bottom by footer height */
   margin-bottom: 60px;
 }
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  background-color: #f5f5f5;
-}
 
 //overide chrome border for inputs
 input:focus {outline:none;}
@@ -33,7 +27,7 @@ input:focus {outline:none;}
 }
 
 .main-container {
-  padding:0px !important; 
+  padding:0px !important;
 }
 
 

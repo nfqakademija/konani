@@ -5,15 +5,36 @@
 .navbar-default {
   background:url('http://www.balikomodotours.com/wp-content/themes/u-design/styles/style1/images/header.jpg') no-repeat !important;
   background-size:100% !important;
-  height:300px;
+  //height:300px;
+  height:0;
+  padding-bottom:20%;
   border:0 !important;
   border-radius:0 !important;
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 100%;
 }
 
+
 //overide bootstrap
-.navbar-nav li a {
+.dropdown-toggle {
   color:white !important;
 }
+.open .dropdown-toggle {
+  color:black !important;
+}
+
+.navbar-nav.navbar-left {
+  margin:0px !important;
+}
+
+.navbar-nav.navbar-right {
+  margin:0px !important;
+  li {
+    float:left;
+  }
+}
+
 
 //overides bootstrap
 .navbar-brand {
@@ -24,10 +45,11 @@
   width:100%;
   height:100px;
   background-color: rgba(0,0,0,0.5);
-  position: absolute;
-  bottom: 0;
+  margin-top:30px;
   line-height: 100px;
   text-align: center;
+  position:absolute;
+  bottom:0;
 }
 
 .search-bar input {
@@ -35,5 +57,52 @@
   width: 400px;
   border: 1px solid #c4c4c4;
   border-radius: 3px;
-  padding:0 10px;
+  padding: 0 10px;
+  margin-top: 2%;
 }
+
+.logout-button, .login-button, .signup-button {
+  color:white !important;
+}
+
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  display: none;
+  float: left;
+  min-width: 160px;
+  padding: 5px 0;
+  margin: 2px 0 0;
+  list-style: none;
+  font-size: 14px;
+  text-align: left;
+  border-radius: 4px !important;
+  margin-top: 1px !important;
+  background-color: #fff;
+  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  background-clip: padding-box;
+}
+
+
+
+@media (max-width: 767px) {
+  .search-bar {
+    margin-top:0px;
+    height:50px;
+    line-height: 50px;
+    position: inherit;
+    bottom:auto;
+  }
+  .navbar-default {
+    height:auto;
+    padding:0px;
+  }
+  .search-bar input {
+    margin-top:-0.5%;
+  }
+}
+
