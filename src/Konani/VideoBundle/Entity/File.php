@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  * File Class for files Uploading ans saving in database
  *
  * @ORM\Table(name="file")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Konani\VideoBundle\Entity\FileRepository")
  * @ORM\HasLifecycleCallbacks
  */
 class File

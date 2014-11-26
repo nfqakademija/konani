@@ -37,10 +37,6 @@ class VideoController extends Controller
     {
         $file = new File();
 
-        $user = $this->getDoctrine()
-            ->getRepository('KonaniUserBundle:User')
-            ->find($this->getUser()->getId());
-
         $form = $this->createFormBuilder($file)
             ->add('name')
             ->add('file')
@@ -52,7 +48,7 @@ class VideoController extends Controller
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
 
-            $file->setUser($user);
+            $file->setUser($this->getUser());
 
             $em->persist($file);
             $em->flush();
@@ -72,13 +68,15 @@ class VideoController extends Controller
      */
     public function uploadedAction()
     {
+        $user = $this->getUser();
+
         $videos = $this->getDoctrine()
             ->getRepository('KonaniVideoBundle:File')
-            ->findBy(array("userId"=>$this->getUser()->getId()));
+            ->findBy(array("user" => $user));
 
         if (!$videos) {
             throw $this->createNotFoundException(
-                'No videos found for user '.$this->getUser()->getUsername()
+                'No videos found for user '.$user->getUsername()
             );
         }
 
@@ -93,7 +91,7 @@ class VideoController extends Controller
 
         $file = $this->getDoctrine()
             ->getRepository('KonaniVideoBundle:File')
-            ->find($id);
+            ->findOneByIdAndUserId($id, $this->getUser()->getId());
 
         if (!$file) {
             throw $this->createNotFoundException(
