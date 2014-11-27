@@ -74,12 +74,6 @@ class VideoController extends Controller
             ->getRepository('KonaniVideoBundle:File')
             ->findBy(array("user" => $user));
 
-        if (!$videos) {
-            throw $this->createNotFoundException(
-                'No videos found for user '.$user->getUsername()
-            );
-        }
-
         return $this->render('KonaniVideoBundle:Default:uploaded.html.twig', array(
                 'videos' => $videos
             ));
@@ -156,9 +150,9 @@ class VideoController extends Controller
 
                 // Create a snipet with title, description, tags and category id
                 $snippet = new Google_Service_YouTube_VideoSnippet();
-                $snippet->setTitle("Programmer in the room");
-                $snippet->setDescription("Test description");
-                $snippet->setTags(array("Programmer", "Symfony", "Google", "Youtube"));
+                $snippet->setTitle("Snowboarder not in the room");
+                $snippet->setDescription("Another description");
+                $snippet->setTags(array("Snowboarder", "Symfony", "Google", "Youtube"));
 
                 // Numeric video category. See
                 // https://developers.google.com/youtube/v3/docs/videoCategories/list
@@ -166,7 +160,7 @@ class VideoController extends Controller
 
                 // Create a video status with privacy status. Options are "public", "private" and "unlisted".
                 $status = new Google_Service_YouTube_VideoStatus();
-                $status->privacyStatus = "public";
+                $status->privacyStatus = "private";
                 // Associate the snippet and status objects with a new video resource.
                 $video = new Google_Service_YouTube_Video();
                 $video->setSnippet($snippet);
@@ -225,7 +219,7 @@ class VideoController extends Controller
             $authUrl = $client->createAuthUrl();
             $htmlBody = "
               <h3>Authorization Required</h3>
-              <p>You need to <a href='".$authUrl."'>authorize access</a> before proceeding.<p>";
+              <p>You need to <a href='".$authUrl."'>authorize access</a> before uploading a video.<p>";
         }
 
         return $this->render('KonaniVideoBundle:Default:uploadToYoutube.html.twig', array( 'html' => $htmlBody));
