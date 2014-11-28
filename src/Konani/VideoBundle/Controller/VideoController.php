@@ -2,6 +2,7 @@
 
 namespace Konani\VideoBundle\Controller;
 
+use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Google_Client;
@@ -83,11 +84,11 @@ class VideoController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $file = $this->getDoctrine()
-            ->getRepository('KonaniVideoBundle:File')
-            ->findOneByIdAndUserId($id, $this->getUser()->getId());
-
-        if (!$file) {
+        try {
+            $file = $this->getDoctrine()
+                ->getRepository('KonaniVideoBundle:File')
+                ->getOneByIdAndUserId($id, $this->getUser()->getId());
+        } catch (NoResultException $e) {
             throw $this->createNotFoundException(
                 'No video found for id '.$id
             );
@@ -108,11 +109,10 @@ class VideoController extends Controller
         $client->setClientId($OAUTH2_CLIENT_ID);
         $client->setClientSecret($OAUTH2_CLIENT_SECRET);
         $client->setScopes('https://www.googleapis.com/auth/youtube');
-        //https://accounts.google.com/o/oauth2/auth
 
+        #$redirect = filter_var('http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
+        $redirect = filter_var('http://' . $_SERVER['HTTP_HOST'] . "/app_dev.php/video/upload_to_youtube", FILTER_SANITIZE_URL);
 
-        $redirect = filter_var('http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'],
-            FILTER_SANITIZE_URL);
         $client->setRedirectUri($redirect);
 
         $youtube = new Google_Service_YouTube($client);
@@ -136,6 +136,9 @@ class VideoController extends Controller
 
         if ($client->getAccessToken()) {
             try{
+                if (!$id) {
+                    $id = $this->get('session')->get($this->get('request')->get('state'));
+                }
                 // File path
                 $file = $this->getDoctrine()
                     ->getRepository('KonaniVideoBundle:File')
@@ -143,14 +146,14 @@ class VideoController extends Controller
 
                 if (!$file) {
                     throw $this->createNotFoundException(
-                        'No video found for id '.$id
+                        'No video found for state '.$id
                     );
                 }
                 $videoPath = $file->getAbsolutePath(); // __DIR__.'/../../../../web/uploads/snbd.mp4';
 
                 // Create a snipet with title, description, tags and category id
                 $snippet = new Google_Service_YouTube_VideoSnippet();
-                $snippet->setTitle("Snowboarder not in the room");
+                $snippet->setTitle($file->GetName());
                 $snippet->setDescription("Another description");
                 $snippet->setTags(array("Snowboarder", "Symfony", "Google", "Youtube"));
 
@@ -210,11 +213,14 @@ class VideoController extends Controller
                     htmlspecialchars($e->getMessage()));
             }
 
-            $_SESSION['token'] = $client->getAccessToken();
+            $this->get('session')->set('token', $client->getAccessToken());
+
         } else {
             $state = mt_rand();
             $client->setState($state);
             $this->get('session')->set('state', $state);
+            // Save video ID to session
+            $this->get('session')->set($state, $id);
 
             $authUrl = $client->createAuthUrl();
             $htmlBody = "
