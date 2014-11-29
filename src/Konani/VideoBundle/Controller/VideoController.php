@@ -5,7 +5,6 @@ namespace Konani\VideoBundle\Controller;
 use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-use Google_Client;
 use Google_Service_YouTube;
 use Google_Service_Exception;
 use Google_Exception;
@@ -15,8 +14,6 @@ use Google_Service_YouTube_VideoStatus;
 use Google_Service_YouTube_Video;
 use Google_Http_MediaFileUpload;
 
-
-use Konani\UserBundle\Entity\User;
 use Konani\VideoBundle\Entity\File;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -99,23 +96,11 @@ class VideoController extends Controller
 
         return $this->redirect($this->generateUrl('video_uploaded'));
     }
-    public function uploadToYoutubeAction($id)
+
+    public function authenticateGoogleAction()
     {
-        $OAUTH2_CLIENT_ID = $this->container->getParameter('google.client_id');
-        $OAUTH2_CLIENT_SECRET = $this->container->getParameter('google.client_secret');
-
-        $client = new Google_Client();
-
-        $client->setClientId($OAUTH2_CLIENT_ID);
-        $client->setClientSecret($OAUTH2_CLIENT_SECRET);
-        $client->setScopes('https://www.googleapis.com/auth/youtube');
-
-        #$redirect = filter_var('http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'], FILTER_SANITIZE_URL);
-        $redirect = filter_var('http://' . $_SERVER['HTTP_HOST'] . "/app_dev.php/video/upload_to_youtube", FILTER_SANITIZE_URL);
-
-        $client->setRedirectUri($redirect);
-
-        $youtube = new Google_Service_YouTube($client);
+        $my_client = $this->get('google_client');
+        $client = $my_client->getGoogleClient();
 
         $code = $this->get('request')->get('code');
         if ($code) {
@@ -125,31 +110,50 @@ class VideoController extends Controller
 
             $client->authenticate($code);
             $this->get('session')->set('token', $client->getAccessToken());
-            $this->redirect($redirect);
+            $this->redirect($my_client->getRedirect());
         }
 
         if ($this->get('session')->get('token')) {
             $client->setAccessToken($this->get('session')->get('token'));
         }
 
+        if ($client->getAccessToken()) {
+            $htmlBody = "You're already authenticated.";
+        } else {
+            $state = mt_rand();
+            $client->setState($state);
+            $this->get('session')->set('state', $state);
+
+            $authUrl = $client->createAuthUrl();
+            $htmlBody = "
+              <h3>Authorization Required</h3>
+              <p>You need to <a href='".$authUrl."'>authorize access</a> before uploading a video.<p>";
+        }
+
+        return $this->render('KonaniVideoBundle:Default:authenticateGoogle.html.twig', array( 'html' => $htmlBody));
+    }
+    public function uploadToYoutubeAction($id)
+    {
+        $my_client = $this->get('google_client');
+        $client = $my_client->getGoogleClient();
+
+        $youtube = new Google_Service_YouTube($client);
+
         $htmlBody = "";
 
         if ($client->getAccessToken()) {
             try{
-                if (!$id) {
-                    $id = $this->get('session')->get($this->get('request')->get('state'));
-                }
-                // File path
                 $file = $this->getDoctrine()
                     ->getRepository('KonaniVideoBundle:File')
                     ->find($id);
 
                 if (!$file) {
                     throw $this->createNotFoundException(
-                        'No video found for state '.$id
+                        'No video found for id '.$id
                     );
                 }
-                $videoPath = $file->getAbsolutePath(); // __DIR__.'/../../../../web/uploads/snbd.mp4';
+
+                $videoPath = $file->getAbsolutePath();
 
                 // Create a snipet with title, description, tags and category id
                 $snippet = new Google_Service_YouTube_VideoSnippet();
@@ -216,16 +220,7 @@ class VideoController extends Controller
             $this->get('session')->set('token', $client->getAccessToken());
 
         } else {
-            $state = mt_rand();
-            $client->setState($state);
-            $this->get('session')->set('state', $state);
-            // Save video ID to session
-            $this->get('session')->set($state, $id);
-
-            $authUrl = $client->createAuthUrl();
-            $htmlBody = "
-              <h3>Authorization Required</h3>
-              <p>You need to <a href='".$authUrl."'>authorize access</a> before uploading a video.<p>";
+            return $this->redirect($this->generateUrl('video_authenticate_google'));
         }
 
         return $this->render('KonaniVideoBundle:Default:uploadToYoutube.html.twig', array( 'html' => $htmlBody));
