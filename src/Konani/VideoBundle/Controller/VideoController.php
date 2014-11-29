@@ -139,6 +139,10 @@ class VideoController extends Controller
 
         $youtube = new Google_Service_YouTube($client);
 
+        if ($this->get('session')->get('token')) {
+            $client->setAccessToken($this->get('session')->get('token'));
+        }
+
         $htmlBody = "";
 
         if ($client->getAccessToken()) {

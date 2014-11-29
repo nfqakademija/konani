@@ -19,12 +19,9 @@ class GoogleClient
         $this->google_client->setClientSecret($parameters['google.client_secret']);
         $this->google_client->setScopes($parameters['google.scope']);
 
-        $redirect = filter_var('http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'],
-            FILTER_SANITIZE_URL);
+        $this->setRedirect($router->generate('video_authenticate_google', array(), true));
 
-        $this->setRedirect($redirect);
-
-        $this->google_client->setRedirectUri($redirect);
+        $this->google_client->setRedirectUri($this->getRedirect());
     }
 
     public function setRedirect($redirect)
