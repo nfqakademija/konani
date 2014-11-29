@@ -1,6 +1,12 @@
 {% extends '::base.html.twig' %}
 
 {% block body %}
-    {{ html|raw }}
+    {% if authUrl is defined %}
+        <h3>Authorization Required</h3>
+        <p>You need to <a href="{{ authUrl }}">authorize access</a> before uploading a video.<p>
+    {% else %}
+        <h3>You're successfully authenticated</h3>
+        <p>You can upload your videos <a href="{{ path('video_uploaded') }}">here</a>.</p>
+    {% endif %}
 {% endblock %}
 

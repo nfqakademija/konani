@@ -118,19 +118,20 @@ class VideoController extends Controller
         }
 
         if ($client->getAccessToken()) {
-            $htmlBody = "You're already authenticated.";
+            return $this->render('KonaniVideoBundle:Default:authenticateGoogle.html.twig');
         } else {
             $state = mt_rand();
             $client->setState($state);
             $this->get('session')->set('state', $state);
 
             $authUrl = $client->createAuthUrl();
-            $htmlBody = "
-              <h3>Authorization Required</h3>
-              <p>You need to <a href='".$authUrl."'>authorize access</a> before uploading a video.<p>";
+
+            return $this->render('KonaniVideoBundle:Default:authenticateGoogle.html.twig', array(
+                    'authUrl' => $authUrl,
+                ));
         }
 
-        return $this->render('KonaniVideoBundle:Default:authenticateGoogle.html.twig', array( 'html' => $htmlBody));
+
     }
     public function uploadToYoutubeAction($id)
     {
@@ -143,7 +144,7 @@ class VideoController extends Controller
             $client->setAccessToken($this->get('session')->get('token'));
         }
 
-        $htmlBody = "";
+        $return = array();
 
         if ($client->getAccessToken()) {
             try{
@@ -205,20 +206,15 @@ class VideoController extends Controller
                 fclose($handle);
                 // If you want to make other calls after the file upload, set setDefer back to false
                 $client->setDefer(false);
-                $htmlBody .= "<h3>Video Uploaded</h3><ul>";
-                $htmlBody .= sprintf('<li>%s (%s)</li>',
-                    $status['snippet']['title'],
-                    $status['id']);
-                $htmlBody .= '</ul>';
+
+                $return['video'] = $status;
 
             // Reikia pirma useriui funkcijos - susikurti youtube cahnneli, paskuj uploadinti
 
             } catch (Google_Service_Exception $e) {
-                $htmlBody .= sprintf('<p>A service error occurred: <code>%s</code></p>',
-                    htmlspecialchars($e->getMessage()));
+                $return['errors']['service'] = htmlspecialchars($e->getMessage());
             } catch (Google_Exception $e) {
-                $htmlBody .= sprintf('<p>An client error occurred: <code>%s</code></p>',
-                    htmlspecialchars($e->getMessage()));
+                $return['errors']['client'] = htmlspecialchars($e->getMessage());
             }
 
             $this->get('session')->set('token', $client->getAccessToken());
@@ -227,6 +223,6 @@ class VideoController extends Controller
             return $this->redirect($this->generateUrl('video_authenticate_google'));
         }
 
-        return $this->render('KonaniVideoBundle:Default:uploadToYoutube.html.twig', array( 'html' => $htmlBody));
+        return $this->render('KonaniVideoBundle:Default:uploadToYoutube.html.twig', array( 'params' => $return));
     }
 }
