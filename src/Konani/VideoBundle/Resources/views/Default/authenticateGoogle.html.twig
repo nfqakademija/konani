@@ -1,12 +1,30 @@
 {% extends '::base.html.twig' %}
 
 {% block body %}
-    {% if authUrl is defined %}
+    {% if params.authUrl is defined %}
         <h3>Authorization Required</h3>
-        <p>You need to <a href="{{ authUrl }}">authorize access</a> before uploading a video.<p>
+        <p>You need to <a href="{{ params.authUrl }}">authorize access</a> before uploading a video.<p>
     {% else %}
         <h3>You're successfully authenticated</h3>
-        <p>You can upload your videos <a href="{{ path('video_uploaded') }}">here</a>.</p>
+        {% if (params.channelLinked is defined) and (params.channelPrivacy is defined) %}
+            {% if (params.channelLinked) and (params.channelPrivacy == 'public') %}
+                <p>You can upload your videos <a href="{{ path('video_uploaded') }}">here</a>.</p>
+            {% else %}
+                <p>You have to <a href="{{ path('video_create_youtube_channel') }}">create a public channel</a> before uploading.</p>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+    {% if params.errors.service is defined %}
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            A service error occurred: <code>{{ params.errors.service }}</code>
+        </div>
+    {% endif %}
+    {% if params.errors.client is defined %}
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            An client error occurred: <code>{{ params.errors.client }}</code>
+        </div>
     {% endif %}
 {% endblock %}
 

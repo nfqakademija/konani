@@ -2,19 +2,17 @@
 
 {% block body %}
     {% if params.video is defined %}
-
+        <h3>Video Uploaded</h3>
+        <ul>
+            <li>
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <strong>{{ params.video.snippet.title }}</strong> ({{ params.video.id }})<br>
+                    <img src="{{ params.video.snippet.thumbnails.medium.url }}" alt="" title="{{ params.video.snippet.description }}"/>
+                </div>
+            </li>
+        </ul>
     {% endif %}
-    <h3>Video Uploaded</h3>
-    <ul>
-        <li>
-            <div class="alert alert-success alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <strong>{{ params.video.snippet.title }}</strong> ({{ params.video.id }})<br>
-                <img src="{{ params.video.snippet.thumbnails.medium.url }}" alt="" title="{{ params.video.snippet.description }}"/>
-            </div>
-        </li>
-    </ul>
-
     {% if params.errors.service is defined %}
         <div class="alert alert-danger alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
