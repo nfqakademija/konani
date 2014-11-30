@@ -1,4 +1,4 @@
 services:
     google_client:
         class: Konani\VideoBundle\Services\GoogleClient
-        arguments: [%google_api%, @router]
+        arguments: [%google_api%, @router, @session]

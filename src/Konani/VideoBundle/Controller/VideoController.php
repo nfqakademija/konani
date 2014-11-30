@@ -15,11 +15,6 @@ use Google_Service_YouTube_VideoStatus;
 use Google_Service_YouTube_Video;
 use Google_Http_MediaFileUpload;
 
-use Google_Service_YouTube_ChannelSnippet;
-use Google_Service_YouTube_Channel;
-
-
-
 use Konani\VideoBundle\Entity\File;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -102,7 +97,6 @@ class VideoController extends Controller
 
         return $this->redirect($this->generateUrl('video_uploaded'));
     }
-
     public function authenticateGoogleAction()
     {
         $my_client = $this->get('google_client');
@@ -119,29 +113,13 @@ class VideoController extends Controller
             return $this->redirect($my_client->getRedirect());
         }
 
-        if ($this->get('session')->get('token')) {
-            $client->setAccessToken($this->get('session')->get('token'));
-        }
+        $my_client->resetToken();
 
         $return = array();
 
         if ($client->getAccessToken()) {
-
             $youtube = new Google_Service_YouTube($client);
-
-            try {
-                $channelsResponse = $youtube->channels->listChannels('status', array(
-                    'mine' => 'true',
-                ));
-
-                $return['channelLinked'] = $channelsResponse['items'][0]['status']->getIsLinked();
-                $return['channelPrivacy'] = $channelsResponse['items'][0]['status']->getPrivacyStatus();
-
-            } catch (Google_Service_Exception $e) {
-                $return['errors']['service'] = htmlspecialchars($e->getMessage());
-            } catch (Google_Exception $e) {
-                $return['errors']['client'] = htmlspecialchars($e->getMessage());
-            }
+            $return = $my_client->getChannelStatus($youtube);
 
             $this->get('session')->set('token', $client->getAccessToken());
 
@@ -149,18 +127,11 @@ class VideoController extends Controller
                 'params' => $return,
             ));
         } else {
-            $state = mt_rand();
-            $client->setState($state);
-            $this->get('session')->set('state', $state);
-
-            $return['authUrl'] = $client->createAuthUrl();
-
+            $return['authUrl'] = $my_client->getAuthUrl();
             return $this->render('KonaniVideoBundle:Default:authenticateGoogle.html.twig', array(
                     'params' => $return,
                 ));
         }
-
-
     }
     public function createYoutubeChannelAction()
     {
@@ -169,25 +140,11 @@ class VideoController extends Controller
 
         $return = array();
 
+        //$youtube = new Google_Service_YouTube($client);
+
         if ($client->getAccessToken()) {
 
-            $youtube = new Google_Service_YouTube($client);
-
-            try {
-                $channelsResponse = $youtube->channels->listChannels('status', array(
-                        'mine' => 'true',
-                    ));
-
-                // Now update channel privacy to public and link a channel
-
-                $return['channelLinked'] = $channelsResponse['items'][0]['status']->getIsLinked();
-                $return['channelPrivacy'] = $channelsResponse['items'][0]['status']->getPrivacyStatus();
-
-            } catch (Google_Service_Exception $e) {
-                $return['errors']['service'] = htmlspecialchars($e->getMessage());
-            } catch (Google_Exception $e) {
-                $return['errors']['client'] = htmlspecialchars($e->getMessage());
-            }
+            //$return = updateChannelPrivacyAction($client);
 
             $this->get('session')->set('token', $client->getAccessToken());
 
@@ -205,20 +162,13 @@ class VideoController extends Controller
 
         $youtube = new Google_Service_YouTube($client);
 
-        if ($this->get('session')->get('token')) {
-            $client->setAccessToken($this->get('session')->get('token'));
-        }
+        $my_client->resetToken();
 
         $return = array();
 
         if ($client->getAccessToken()) {
             try{
-
-                $channelsResponse = $youtube->channels->listChannels('status', array(
-                        'mine' => 'true',
-                    ));
-
-                if ($channelsResponse['items'][0]['status']->getIsLinked() && $channelsResponse['items'][0]['status']->getPrivacyStatus() == 'public') {
+                if ($my_client->channelStatusOK($youtube)) {
 
                     $file = $this->getDoctrine()
                         ->getRepository('KonaniVideoBundle:File')
@@ -229,18 +179,9 @@ class VideoController extends Controller
                             'No video found for id ' . $id
                         );
                     }
-
                     $videoPath = $file->getAbsolutePath();
 
-                    // Create a snipet with title, description, tags and category id
-                    $snippet = new Google_Service_YouTube_VideoSnippet();
-                    $snippet->setTitle($file->GetName());
-                    $snippet->setDescription("Another description");
-                    $snippet->setTags(array("Snowboarder", "Symfony", "Google", "Youtube"));
-
-                    // Numeric video category. See
-                    // https://developers.google.com/youtube/v3/docs/videoCategories/list
-                    $snippet->setCategoryId("22");
+                    $snippet = $my_client->createSnippet($file);
 
                     // Create a video status with privacy status. Options are "public", "private" and "unlisted".
                     $status = new Google_Service_YouTube_VideoStatus();
@@ -298,6 +239,7 @@ class VideoController extends Controller
 
         return $this->render('KonaniVideoBundle:Default:uploadToYoutube.html.twig', array( 'params' => $return));
     }
+    /*
     public function newTagAction()
     {
         $video = new Video();
@@ -312,4 +254,5 @@ class VideoController extends Controller
             ->add('save','submit')
             ->getForm();
     }
+    */
 }
