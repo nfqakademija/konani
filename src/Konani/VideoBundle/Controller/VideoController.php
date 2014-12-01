@@ -140,19 +140,12 @@ class VideoController extends Controller
     {
         $my_client = $this->get('google_client');
         $client = $my_client->getGoogleClient();
-
         //$youtube = new Google_Service_YouTube($client);
-
         $my_client->resetToken();
-
         $return = array();
-
         if ($client->getAccessToken()) {
-
             //$return = updateChannelPrivacyAction($client);
-
             $this->get('session')->set('token', $client->getAccessToken());
-
             return $this->render('KonaniVideoBundle:Default:createYoutubeChannel.html.twig', array(
                     'params' => $return,
                 ));
@@ -174,8 +167,6 @@ class VideoController extends Controller
         $youtube = new Google_Service_YouTube($client);
 
         $my_client->resetToken();
-
-        $return = array();
 
         if ($client->getAccessToken()) {
             if ($my_client->channelStatusOK($youtube)) {
@@ -203,7 +194,7 @@ class VideoController extends Controller
 
         return $this->render('KonaniVideoBundle:Default:uploadToYoutube.html.twig', array( 'params' => $return));
     }
-    /*
+
     public function newTagAction()
     {
         $video = new Video();
@@ -218,5 +209,4 @@ class VideoController extends Controller
             ->add('save','submit')
             ->getForm();
     }
-    */
 }
