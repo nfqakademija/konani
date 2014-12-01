@@ -1,0 +1,81 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div id="map-canvas"></div>
+    {{ form(form) }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript"
+            src="https://maps.googleapis.com/maps/api/js?key={{ google_api.api_key }}&libraries=places">
+    </script>
+    <script type="text/javascript">
+
+        var map;
+        var markers = [];
+
+        // Initializes google map
+        function initialize() {
+            var mapOptions = {
+                center: { lat: -34.397, lng: 150.644},
+                zoom: 8,
+                disableDoubleClickZoom: true
+            };
+            map = new google.maps.Map(document.getElementById('map-canvas'),
+                    mapOptions);
+
+            google.maps.event.addListener(map, "dblclick", function (event) {
+                deleteOverlays();
+                var markernew = createMarker(event.latLng,'');
+                markers.push(markernew);
+
+                updateInputs(markernew);
+
+                google.maps.event.addListener(markernew, 'dragend', function(evt) {
+
+                    updateInputs(markernew);
+
+                });
+
+            });
+        }
+
+        // Creates map marker
+        function createMarker(point,html)
+        {
+            var marker=new google.maps.Marker({map:map,position:point,draggable:true});
+            markers.push(marker);
+            return marker;
+        }
+
+        // Updates inputs based on market coordinates
+        function updateInputs(marker) {
+            var lat = marker.position.lat();
+            var lng = marker.position.lng();
+
+            $('#form_latitude').val(lat);
+            $('#form_longitude').val(lng);
+        }
+
+        // Sets the map on all markers in the array.
+        function setAllMap(map) {
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setMap(map);
+            }
+        }
+
+        // Removes the overlays from the map, but keeps them in the array.
+        function clearOverlays() {
+            setAllMap(null);
+        }
+
+        // Deletes all markers in the array by removing references to them.
+        function deleteOverlays() {
+            clearOverlays();
+            markers = [];
+        }
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+{% endblock %}

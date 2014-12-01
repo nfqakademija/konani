@@ -138,6 +138,8 @@ class VideoController extends Controller
     }
     public function createYoutubeChannelAction()
     {
+        header('X-Frame-Options: GOFORIT');
+
         $my_client = $this->get('google_client');
         $client = $my_client->getGoogleClient();
         //$youtube = new Google_Service_YouTube($client);
@@ -195,18 +197,41 @@ class VideoController extends Controller
         return $this->render('KonaniVideoBundle:Default:uploadToYoutube.html.twig', array( 'params' => $return));
     }
 
-    public function newTagAction()
+    public function newTagAction(Request $request)
     {
-        $video = new Video();
-        $video->setUser($this->getUser());
+        $my_client = $this->get('google_client');
+        $client = $my_client->getGoogleClient();
+        $youtube = new Google_Service_YouTube($client);
+        $my_client->resetToken();
+        if ($client->getAccessToken()) {
+            $listVideos = $my_client->getClientVideos($youtube);
+            $video = new Video();
+            $form = $this->createFormBuilder($video)
+                    ->add('latitude')
+                    ->add('longitude')
+                    ->add('youtube_id', 'choice', array(
+                        'choices'   => $listVideos
+                        )
+                    )
+                    ->add('name')
+                    ->add('description', 'textarea')
+                    ->add('save','submit')
+                    ->getForm();
+            $form->handleRequest($request);
+            if ($form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $video->setUser($this->getUser());
+                $em->persist($video);
+                $em->flush();
 
-        $form = $this->createFormBuilder($video)
-            ->add('latitude')
-            ->add('longitude')
-            ->add('name')
-            ->add('description')
-
-            ->add('save','submit')
-            ->getForm();
+                return $this->redirect($this->generateUrl('video_tagged'));
+            }
+            $this->get('session')->set('token', $client->getAccessToken());
+        } else {
+            return $this->redirect($this->generateUrl('video_authenticate_google'));
+        }
+        return $this->render('KonaniVideoBundle:Default:newTag.html.twig', array(
+                'form' => $form->createView(),
+            ));
     }
 }

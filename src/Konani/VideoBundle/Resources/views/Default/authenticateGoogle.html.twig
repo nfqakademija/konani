@@ -10,7 +10,7 @@
             {% if (params.channelLinked) and (params.channelPrivacy == 'public') %}
                 <p>You can upload your videos <a href="{{ path('video_uploaded') }}">here</a>.</p>
             {% else %}
-                <p>You have to <a href="{{ path('video_create_youtube_channel') }}">create a public channel</a> before uploading.</p>
+                <p>You have to <a target="_blank" href="https://www.youtube.com/create_channel?chromeless=1&next=/channel_creation_done">create a public channel</a> before uploading and then <a href="{{ path(app.request.attributes.get('_route')) }}">refresh</a> this page.</p>
             {% endif %}
         {% endif %}
     {% endif %}
@@ -23,7 +23,11 @@
     {% if params.errors.client is defined %}
         <div class="alert alert-danger alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            An client error occurred: <code>{{ params.errors.client }}</code>
+            {% if '401' in params.errors.client %}
+                Error: You have to link your account to youtube channel.
+            {% else %}
+                An client error occurred: <code>{{ params.errors.client }}</code>
+            {% endif %}
         </div>
     {% endif %}
 {% endblock %}

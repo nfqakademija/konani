@@ -78,14 +78,7 @@ class Video
      */
     private $updatedAt;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="thumbnail_url", type="string", length=255)
-     */
-    private $thumbnailUrl;
-
-    /**
+     /**
      * @ORM\ManyToOne(targetEntity="\Konani\UserBundle\Entity\User", inversedBy="videos")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
@@ -294,29 +287,6 @@ class Video
     public function getUpdatedAt()
     {
         return $this->updatedAt;
-    }
-
-    /**
-     * Set thumbnailUrl
-     *
-     * @param string $thumbnailUrl
-     * @return Video
-     */
-    public function setThumbnailUrl($thumbnailUrl)
-    {
-        $this->thumbnailUrl = $thumbnailUrl;
-
-        return $this;
-    }
-
-    /**
-     * Get thumbnailUrl
-     *
-     * @return string 
-     */
-    public function getThumbnailUrl()
-    {
-        return $this->thumbnailUrl;
     }
 
     /**

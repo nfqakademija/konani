@@ -25,3 +25,7 @@ video_create_youtube_channel:
 video_upload_to_youtube_success:
     path:     /upload_to_youtube_/success/
     defaults: { _controller: KonaniVideoBundle:Video:uploadToYoutubeSuccess }
+
+video_new_tag:
+    path:     /new_tag/
+    defaults: { _controller: KonaniVideoBundle:Video:newTag }

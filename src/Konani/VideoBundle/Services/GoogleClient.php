@@ -29,9 +29,9 @@ class GoogleClient
 
         $this->google_client = new Google_Client();
 
-        $this->google_client->setClientId($parameters['google.client_id']);
-        $this->google_client->setClientSecret($parameters['google.client_secret']);
-        $this->google_client->setScopes($parameters['google.scope']);
+        $this->google_client->setClientId($parameters['client_id']);
+        $this->google_client->setClientSecret($parameters['client_secret']);
+        $this->google_client->setScopes($parameters['scope']);
 
         $this->setRedirect($router->generate('video_authenticate_google', array(), true));
 
@@ -158,9 +158,8 @@ class GoogleClient
         try{
             $videoPath = $file->getAbsolutePath();
             $snippet = $this->createSnippet($file);
-            $status = $this->createStatus($this->parameters['google.privacy']);
+            $status = $this->createStatus($this->parameters['privacy']);
             $video = $this->createVideo($snippet, $status);
-
             // Specify the size of each chunk of data, in bytes. Set a higher value for
             // reliable connection as fewer chunks lead to faster uploads. Set a lower
             // value for better recovery on less reliable connections.
@@ -170,7 +169,7 @@ class GoogleClient
             $this->google_client->setDefer(true);
             // Create a request for the API's videos.insert method to create and upload the video.
             $insertRequest = $youtube->videos->insert("status,snippet", $video);
-            // Create a MediaFileUpload object for resumble uploads.
+            // Create a MediaFileUpload object for resumable uploads.
             $media = new Google_Http_MediaFileUpload(
                 $this->google_client,
                 $insertRequest,
@@ -181,18 +180,51 @@ class GoogleClient
             );
             $media->setFileSize(filesize($videoPath));
             // Read the media file and upload it chunk by chunk.
-            $status = false;
+            $uploadStatus = false;
             $handle = fopen($videoPath, "rb");
-            while (!$status && !feof($handle)) {
+            while (!$uploadStatus && !feof($handle)) {
                 $chunk = fread($handle, $chunkSizeBytes);
-                $status = $media->nextChunk($chunk);
+                $uploadStatus = $media->nextChunk($chunk);
             }
             fclose($handle);
             // If you want to make other calls after the file upload, set setDefer back to false
             $this->google_client->setDefer(false);
+            $return['video'] = $uploadStatus;
 
-            $return['video'] = $status;
+        } catch (Google_Service_Exception $e) {
+            $return['errors']['service'] = htmlspecialchars($e->getMessage());
+        } catch (Google_Exception $e) {
+            $return['errors']['client'] = htmlspecialchars($e->getMessage());
+        }
+        return $return;
+    }
 
+    /**
+     * Call the channels.list method to retrieve information about the currently authenticated user's channel.
+     *
+     * Extract the unique playlist ID that identifies the list of videos uploaded to the channel, and then call the playlistItems.list method to retrieve that list.
+     *
+     * @param $youtube
+     * @return array
+     */
+    public function getClientVideos($youtube)
+    {
+        $return = array();
+        try {
+            $channelsResponse = $youtube->channels->listChannels('contentDetails', array(
+                    'mine' => 'true',
+                ));
+            foreach ($channelsResponse['items'] as $channel) {
+
+                $uploadsListId = $channel['contentDetails']['relatedPlaylists']['uploads'];
+                $playlistItemsResponse = $youtube->playlistItems->listPlaylistItems('snippet', array(
+                        'playlistId' => $uploadsListId,
+                        'maxResults' => 50
+                    ));
+                foreach ($playlistItemsResponse['items'] as $playlistItem) {
+                    $return[$playlistItem['snippet']['resourceId']['videoId']] = $playlistItem['snippet']['title'];
+                }
+            }
         } catch (Google_Service_Exception $e) {
             $return['errors']['service'] = htmlspecialchars($e->getMessage());
         } catch (Google_Exception $e) {
