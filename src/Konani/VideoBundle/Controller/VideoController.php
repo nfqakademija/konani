@@ -7,13 +7,6 @@ use Konani\VideoBundle\Entity\Video;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Google_Service_YouTube;
-use Google_Service_Exception;
-use Google_Exception;
-
-use Google_Service_YouTube_VideoSnippet;
-use Google_Service_YouTube_VideoStatus;
-use Google_Service_YouTube_Video;
-use Google_Http_MediaFileUpload;
 
 use Konani\VideoBundle\Entity\File;
 
@@ -78,6 +71,11 @@ class VideoController extends Controller
             ));
     }
 
+    /**
+     * Deletes video entity if exists
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
     public function deleteUploadedAction($id)
     {
         $em = $this->getDoctrine()->getManager();
@@ -97,6 +95,11 @@ class VideoController extends Controller
 
         return $this->redirect($this->generateUrl('video_uploaded'));
     }
+
+    /**
+     * Authenticates client and redirects if gets right parametes / otherwise provides authentication link
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function authenticateGoogleAction()
     {
         $my_client = $this->get('google_client');
@@ -138,9 +141,11 @@ class VideoController extends Controller
         $my_client = $this->get('google_client');
         $client = $my_client->getGoogleClient();
 
-        $return = array();
-
         //$youtube = new Google_Service_YouTube($client);
+
+        $my_client->resetToken();
+
+        $return = array();
 
         if ($client->getAccessToken()) {
 
@@ -155,6 +160,12 @@ class VideoController extends Controller
             return $this->redirect($this->generateUrl('video_authenticate_google'));
         }
     }
+
+    /**
+     * Uploads video to clients youtube channel
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function uploadToYoutubeAction($id)
     {
         $my_client = $this->get('google_client');
@@ -167,68 +178,21 @@ class VideoController extends Controller
         $return = array();
 
         if ($client->getAccessToken()) {
-            try{
-                if ($my_client->channelStatusOK($youtube)) {
+            if ($my_client->channelStatusOK($youtube)) {
 
-                    $file = $this->getDoctrine()
-                        ->getRepository('KonaniVideoBundle:File')
-                        ->find($id);
+                $file = $this->getDoctrine()
+                    ->getRepository('KonaniVideoBundle:File')
+                    ->find($id);
 
-                    if (!$file) {
-                        throw $this->createNotFoundException(
-                            'No video found for id ' . $id
-                        );
-                    }
-                    $videoPath = $file->getAbsolutePath();
-
-                    $snippet = $my_client->createSnippet($file);
-
-                    // Create a video status with privacy status. Options are "public", "private" and "unlisted".
-                    $status = new Google_Service_YouTube_VideoStatus();
-                    $status->privacyStatus = "private";
-                    // Associate the snippet and status objects with a new video resource.
-                    $video = new Google_Service_YouTube_Video();
-                    $video->setSnippet($snippet);
-                    $video->setStatus($status);
-                    // Specify the size of each chunk of data, in bytes. Set a higher value for
-                    // reliable connection as fewer chunks lead to faster uploads. Set a lower
-                    // value for better recovery on less reliable connections.
-                    $chunkSizeBytes = 1 * 1024 * 1024;
-                    // Setting the defer flag to true tells the client to return a request which can be called
-                    // with ->execute(); instead of making the API call immediately.
-                    $client->setDefer(true);
-                    // Create a request for the API's videos.insert method to create and upload the video.
-                    $insertRequest = $youtube->videos->insert("status,snippet", $video);
-                    // Create a MediaFileUpload object for resumable uploads.
-                    $media = new Google_Http_MediaFileUpload(
-                        $client,
-                        $insertRequest,
-                        'video/*',
-                        null,
-                        true,
-                        $chunkSizeBytes
+                if (!$file) {
+                    throw $this->createNotFoundException(
+                        'No video found for id ' . $id
                     );
-                    $media->setFileSize(filesize($videoPath));
-                    // Read the media file and upload it chunk by chunk.
-                    $status = false;
-                    $handle = fopen($videoPath, "rb");
-                    while (!$status && !feof($handle)) {
-                        $chunk = fread($handle, $chunkSizeBytes);
-                        $status = $media->nextChunk($chunk);
-                    }
-                    fclose($handle);
-                    // If you want to make other calls after the file upload, set setDefer back to false
-                    $client->setDefer(false);
-
-                    $return['video'] = $status;
-                } else {
-                    return $this->redirect($this->generateUrl('video_authenticate_google'));
                 }
+                $return = $my_client->uploadVideo($file, $youtube);
 
-            } catch (Google_Service_Exception $e) {
-                $return['errors']['service'] = htmlspecialchars($e->getMessage());
-            } catch (Google_Exception $e) {
-                $return['errors']['client'] = htmlspecialchars($e->getMessage());
+            } else {
+                return $this->redirect($this->generateUrl('video_authenticate_google'));
             }
 
             $this->get('session')->set('token', $client->getAccessToken());

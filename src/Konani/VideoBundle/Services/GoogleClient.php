@@ -11,6 +11,10 @@ use Google_Service_Exception;
 use Google_Exception;
 
 use Google_Service_YouTube_VideoSnippet;
+use Google_Service_YouTube_VideoStatus;
+use Google_Service_YouTube_Video;
+use Google_Http_MediaFileUpload;
+
 
 class GoogleClient
 {
@@ -21,6 +25,8 @@ class GoogleClient
 
     public function __construct($parameters, Router $router, Session $session)
     {
+        $this->parameters = $parameters;
+
         $this->google_client = new Google_Client();
 
         $this->google_client->setClientId($parameters['google.client_id']);
@@ -49,6 +55,7 @@ class GoogleClient
     }
     public function getChannelStatus($youtube)
     {
+        $return = array();
         try {
             $channelsResponse = $youtube->channels->listChannels('status', array(
                     'mine' => 'true',
@@ -63,19 +70,6 @@ class GoogleClient
             $return['errors']['client'] = htmlspecialchars($e->getMessage());
         }
         return $return;
-    }
-    public function createSnippet($file)
-    {
-        // Create a snipet with title, description, tags and category id
-        $snippet = new Google_Service_YouTube_VideoSnippet();
-        $snippet->setTitle($file->GetName());
-        $snippet->setDescription("Another description");
-        $snippet->setTags(array("Snowboarder", "Symfony", "Google", "Youtube"));
-
-        // Numeric video category. See
-        // https://developers.google.com/youtube/v3/docs/videoCategories/list
-        $snippet->setCategoryId("22");
-        return $snippet;
     }
     public function setRedirect($redirect)
     {
@@ -107,5 +101,103 @@ class GoogleClient
         }
 
         return false;
+    }
+
+    /**
+     * Create a snipet with title, description, tags and category id
+     * Numeric video category. See
+     * https://developers.google.com/youtube/v3/docs/videoCategories/list
+     * @param $file
+     * @return Google_Service_YouTube_VideoSnippet
+     */
+    public function createSnippet($file)
+    {
+        $snippet = new Google_Service_YouTube_VideoSnippet();
+        $snippet->setTitle($file->GetName());
+        $snippet->setDescription("Another description");
+        $snippet->setTags(array("Snowboarder", "Symfony", "Google", "Youtube"));
+        $snippet->setCategoryId("22");
+        return $snippet;
+    }
+
+    /**
+     * Create a video status with privacy status. Options are "public", "private" and "unlisted".
+     * @param $privacy
+     * @return Google_Service_YouTube_VideoStatus
+     */
+    public function createStatus($privacy)
+    {
+        $status = new Google_Service_YouTube_VideoStatus();
+        $status->privacyStatus = $privacy;
+        return $status;
+    }
+
+    /**
+     * Associate the snippet and status objects with a new video resource.
+     * @param $snippet
+     * @param $status
+     * @return Google_Service_YouTube_Video
+     */
+    public function createVideo($snippet, $status)
+    {
+        $video = new Google_Service_YouTube_Video();
+        $video->setSnippet($snippet);
+        $video->setStatus($status);
+        return $video;
+    }
+
+    /**
+     * Uploads video to clients youtube channel
+     * @param $file
+     * @param $youtube
+     * @return array
+     */
+    public function uploadVideo($file, $youtube)
+    {
+        $return = array();
+        try{
+            $videoPath = $file->getAbsolutePath();
+            $snippet = $this->createSnippet($file);
+            $status = $this->createStatus($this->parameters['google.privacy']);
+            $video = $this->createVideo($snippet, $status);
+
+            // Specify the size of each chunk of data, in bytes. Set a higher value for
+            // reliable connection as fewer chunks lead to faster uploads. Set a lower
+            // value for better recovery on less reliable connections.
+            $chunkSizeBytes = 1 * 1024 * 1024;
+            // Setting the defer flag to true tells the client to return a request which can be called
+            // with ->execute(); instead of making the API call immediately.
+            $this->google_client->setDefer(true);
+            // Create a request for the API's videos.insert method to create and upload the video.
+            $insertRequest = $youtube->videos->insert("status,snippet", $video);
+            // Create a MediaFileUpload object for resumble uploads.
+            $media = new Google_Http_MediaFileUpload(
+                $this->google_client,
+                $insertRequest,
+                'video/*',
+                null,
+                true,
+                $chunkSizeBytes
+            );
+            $media->setFileSize(filesize($videoPath));
+            // Read the media file and upload it chunk by chunk.
+            $status = false;
+            $handle = fopen($videoPath, "rb");
+            while (!$status && !feof($handle)) {
+                $chunk = fread($handle, $chunkSizeBytes);
+                $status = $media->nextChunk($chunk);
+            }
+            fclose($handle);
+            // If you want to make other calls after the file upload, set setDefer back to false
+            $this->google_client->setDefer(false);
+
+            $return['video'] = $status;
+
+        } catch (Google_Service_Exception $e) {
+            $return['errors']['service'] = htmlspecialchars($e->getMessage());
+        } catch (Google_Exception $e) {
+            $return['errors']['client'] = htmlspecialchars($e->getMessage());
+        }
+        return $return;
     }
 }
