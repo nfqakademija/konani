@@ -7,9 +7,6 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 use Google_Client;
 
-use Google_Service_Exception;
-use Google_Exception;
-
 use Google_Service_YouTube_VideoSnippet;
 use Google_Service_YouTube_VideoStatus;
 use Google_Service_YouTube_Video;

@@ -8,6 +8,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Google_Service_YouTube;
 
+use Google_Service_Exception;
+use Google_Exception;
+
 use Konani\VideoBundle\Entity\File;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -211,13 +214,12 @@ class VideoController extends Controller
             } else {
                 return $this->redirect($this->generateUrl('video_authenticate_google'));
             }
+            $this->get('session')->set('token', $client->getAccessToken());
         } catch (Google_Service_Exception $e) {
             throw $this->createAccessDeniedException("A service error occurred: ".htmlspecialchars($e->getMessage()));
         } catch (Google_Exception $e) {
             throw $this->createAccessDeniedException("An client error occurred: ".htmlspecialchars($e->getMessage()));
         }
-
-        $this->get('session')->set('token', $client->getAccessToken());
     }
 
     public function newTagAction(Request $request)
