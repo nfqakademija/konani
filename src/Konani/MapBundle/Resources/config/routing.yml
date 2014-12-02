@@ -1,0 +1,3 @@
+konani_map_search:
+    path:     /search/
+    defaults: { _controller: KonaniMapBundle:Default:index }

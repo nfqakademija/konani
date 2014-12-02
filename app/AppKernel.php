@@ -20,6 +20,7 @@ class AppKernel extends Kernel
             new Konani\AdminBundle\KonaniAdminBundle(),
             new Konani\VideoBundle\KonaniVideoBundle(),
             new Konani\CartBundle\KonaniCartBundle(),
+            new Konani\MapBundle\KonaniMapBundle(),
             new Konani\FrontendBundle\FrontendBundle(),
             new FOS\UserBundle\FOSUserBundle(),
             new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),

@@ -1,0 +1,52 @@
+{% block map %}
+        <div clas="row">
+            <div class="col-md-6 col-lg-6 col-sm-1">
+                <ul class="videos medium-block-grid-3 large-block-grid-3 small-block-grid-1">
+                    {% for video in videos %}
+                        <li>
+                            <div class="h4">{{ video.name }}</div>
+                            <img src="http://img.youtube.com/vi/lGLdHfCgS4/0.jpg">
+                        </li>
+                        <li>
+                            <div class="h4">{{ video.name }}</div>
+                            <img src="http://img.youtube.com/vi/lGLdHfCgS4/0.jpg">
+                        </li>
+                        <li>
+                            <div class="h4">{{ video.name }}</div>
+                            <img src="http://img.youtube.com/vi/lGLdHfCgS4/0.jpg">
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-md-6 col-lg-6 col-sm-1">
+                <div id="map-canvas"></div>
+            </div>
+        </div>
+
+    <script>
+        $(document).ready(function() {
+            var map = new GMaps({
+               div: '#map-canvas',
+               lat: {{ latitude }},
+               lng: {{ longitude }}
+            });
+            {% for video in videos %}
+               map.addMarker({
+                   lat:  {{ video.latitude }},
+                   lng: {{ video.longitude }},
+                   title: '{{ video.name }}',
+                   click: function(e) {
+                       //alert('You clicked in this marker');
+                   },
+                   /*icon: {
+                       image: ""
+                   },*/
+                   infoWindow: {
+                       content: '<p>HTML Content</p>'
+                   }
+               });
+            {% endfor %}
+        });
+    </script>
+
+{% endblock %}
