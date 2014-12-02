@@ -7,13 +7,13 @@
     </a>
     <br><br>
 
-    {% if videos is defined %}
+    {% if uploadedVideos is defined %}
         <table class="table">
             <tr>
                 <th>Name</th>
                 <th>Actions</th>
             </tr>
-        {% for video in videos %}
+        {% for video in uploadedVideos %}
             <tr>
                 <td>{{ video.name }}</td>
                 <td>

@@ -7,7 +7,7 @@
     </a>
     <br><br>
 
-    {% if videos is defined %}
+    {% if taggedVideos is defined %}
         <table class="table">
             <tr>
                 <th>Name</th>
@@ -15,7 +15,7 @@
                 <th>ID</th>
                 <th>Actions</th>
             </tr>
-        {% for video in videos %}
+        {% for video in taggedVideos %}
             <tr>
                 <td>{{ video.name }}</td>
                 <td>{{ video.description }}</td>

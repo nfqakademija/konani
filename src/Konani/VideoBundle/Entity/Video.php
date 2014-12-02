@@ -248,10 +248,9 @@ class Video
      * Set createdAt
      *
      * @ORM\PrePersist
-     * @param \DateTime $createdAt
      * @return Video
      */
-    public function setCreatedAt($createdAt)
+    public function setCreatedAt()
     {
         $this->createdAt = new \DateTime();
 
@@ -272,10 +271,9 @@ class Video
      * Set updatedAt
      *
      * @ORM\PrePersist
-     * @param \DateTime $updatedAt
      * @return Video
      */
-    public function setUpdatedAt($updatedAt)
+    public function setUpdatedAt()
     {
         $this->updatedAt = new \DateTime();
 

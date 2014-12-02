@@ -48,42 +48,28 @@ class GoogleClient
 
         return $this->google_client->createAuthUrl();
     }
-    public function getChannelStatus($youtube)
-    {
-        $return = array();
-        try {
-            $channelsResponse = $youtube->channels->listChannels('status', array(
-                    'mine' => 'true',
-                ));
 
-            $return['channelLinked'] = $channelsResponse['items'][0]['status']->getIsLinked();
-            $return['channelPrivacy'] = $channelsResponse['items'][0]['status']->getPrivacyStatus();
-
-        } catch (Google_Service_Exception $e) {
-            $return['errors']['service'] = htmlspecialchars($e->getMessage());
-        } catch (Google_Exception $e) {
-            $return['errors']['client'] = htmlspecialchars($e->getMessage());
-        }
-        return $return;
-    }
-    public function getGoogleClient()
+    /**
+     * Determines if client has a linked youtube channel
+     *
+     * @param $youtube
+     * @return bool
+     */
+    public function getChannelLinked($youtube)
     {
-        return $this->google_client;
-    }
-    public function channelStatusOK($youtube)
-    {
-        $channelsResponse = $youtube->channels->listChannels(
-            'status',
-            array(
+        $channelsResponse = $youtube->channels->listChannels('status', array(
                 'mine' => 'true',
-            )
-        );
+            ));
 
         if ($channelsResponse['items'][0]['status']->getIsLinked() && $channelsResponse['items'][0]['status']->getPrivacyStatus() == 'public') {
             return true;
         }
 
         return false;
+    }
+    public function getGoogleClient()
+    {
+        return $this->google_client;
     }
 
     /**
@@ -137,49 +123,41 @@ class GoogleClient
      */
     public function uploadVideo($file, $youtube)
     {
-        $return = array();
-        try{
-            $videoPath = $file->getAbsolutePath();
-            $snippet = $this->createSnippet($file);
-            $status = $this->createStatus($this->parameters['privacy']);
-            $video = $this->createVideo($snippet, $status);
-            // Specify the size of each chunk of data, in bytes. Set a higher value for
-            // reliable connection as fewer chunks lead to faster uploads. Set a lower
-            // value for better recovery on less reliable connections.
-            $chunkSizeBytes = 1 * 1024 * 1024;
-            // Setting the defer flag to true tells the client to return a request which can be called
-            // with ->execute(); instead of making the API call immediately.
-            $this->google_client->setDefer(true);
-            // Create a request for the API's videos.insert method to create and upload the video.
-            $insertRequest = $youtube->videos->insert("status,snippet", $video);
-            // Create a MediaFileUpload object for resumable uploads.
-            $media = new Google_Http_MediaFileUpload(
-                $this->google_client,
-                $insertRequest,
-                'video/*',
-                null,
-                true,
-                $chunkSizeBytes
-            );
-            $media->setFileSize(filesize($videoPath));
-            // Read the media file and upload it chunk by chunk.
-            $uploadStatus = false;
-            $handle = fopen($videoPath, "rb");
-            while (!$uploadStatus && !feof($handle)) {
-                $chunk = fread($handle, $chunkSizeBytes);
-                $uploadStatus = $media->nextChunk($chunk);
-            }
-            fclose($handle);
-            // If you want to make other calls after the file upload, set setDefer back to false
-            $this->google_client->setDefer(false);
-            $return['video'] = $uploadStatus;
-
-        } catch (Google_Service_Exception $e) {
-            $return['errors']['service'] = htmlspecialchars($e->getMessage());
-        } catch (Google_Exception $e) {
-            $return['errors']['client'] = htmlspecialchars($e->getMessage());
+        $videoPath = $file->getAbsolutePath();
+        $snippet = $this->createSnippet($file);
+        $status = $this->createStatus($this->parameters['privacy']);
+        $video = $this->createVideo($snippet, $status);
+        // Specify the size of each chunk of data, in bytes. Set a higher value for
+        // reliable connection as fewer chunks lead to faster uploads. Set a lower
+        // value for better recovery on less reliable connections.
+        $chunkSizeBytes = 1 * 1024 * 1024;
+        // Setting the defer flag to true tells the client to return a request which can be called
+        // with ->execute(); instead of making the API call immediately.
+        $this->google_client->setDefer(true);
+        // Create a request for the API's videos.insert method to create and upload the video.
+        $insertRequest = $youtube->videos->insert("status,snippet", $video);
+        // Create a MediaFileUpload object for resumable uploads.
+        $media = new Google_Http_MediaFileUpload(
+            $this->google_client,
+            $insertRequest,
+            'video/*',
+            null,
+            true,
+            $chunkSizeBytes
+        );
+        $media->setFileSize(filesize($videoPath));
+        // Read the media file and upload it chunk by chunk.
+        $uploadStatus = false;
+        $handle = fopen($videoPath, "rb");
+        while (!$uploadStatus && !feof($handle)) {
+            $chunk = fread($handle, $chunkSizeBytes);
+            $uploadStatus = $media->nextChunk($chunk);
         }
-        return $return;
+        fclose($handle);
+        // If you want to make other calls after the file upload, set setDefer back to false
+        $this->google_client->setDefer(false);
+
+        return $uploadStatus;
     }
 
     /**
@@ -193,25 +171,19 @@ class GoogleClient
     public function getClientVideos($youtube)
     {
         $return = array();
-        try {
-            $channelsResponse = $youtube->channels->listChannels('contentDetails', array(
-                    'mine' => 'true',
-                ));
-            foreach ($channelsResponse['items'] as $channel) {
+        $channelsResponse = $youtube->channels->listChannels('contentDetails', array(
+                'mine' => 'true',
+            ));
+        foreach ($channelsResponse['items'] as $channel) {
 
-                $uploadsListId = $channel['contentDetails']['relatedPlaylists']['uploads'];
-                $playlistItemsResponse = $youtube->playlistItems->listPlaylistItems('snippet', array(
-                        'playlistId' => $uploadsListId,
-                        'maxResults' => 50
-                    ));
-                foreach ($playlistItemsResponse['items'] as $playlistItem) {
-                    $return[$playlistItem['snippet']['resourceId']['videoId']] = $playlistItem['snippet']['title'];
-                }
+            $uploadsListId = $channel['contentDetails']['relatedPlaylists']['uploads'];
+            $playlistItemsResponse = $youtube->playlistItems->listPlaylistItems('snippet', array(
+                    'playlistId' => $uploadsListId,
+                    'maxResults' => 50
+                ));
+            foreach ($playlistItemsResponse['items'] as $playlistItem) {
+                $return[$playlistItem['snippet']['resourceId']['videoId']] = $playlistItem['snippet']['title'];
             }
-        } catch (Google_Service_Exception $e) {
-            $return['errors']['service'] = htmlspecialchars($e->getMessage());
-        } catch (Google_Exception $e) {
-            $return['errors']['client'] = htmlspecialchars($e->getMessage());
         }
         return $return;
     }
