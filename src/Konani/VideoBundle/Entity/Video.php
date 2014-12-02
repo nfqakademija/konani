@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ORM\Table(name="video")
  * @ORM\Entity(repositoryClass="Konani\VideoBundle\Entity\VideoRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Video
 {
@@ -246,12 +247,13 @@ class Video
     /**
      * Set createdAt
      *
+     * @ORM\PrePersist
      * @param \DateTime $createdAt
      * @return Video
      */
     public function setCreatedAt($createdAt)
     {
-        $this->createdAt = $createdAt;
+        $this->createdAt = new \DateTime();
 
         return $this;
     }
@@ -269,12 +271,13 @@ class Video
     /**
      * Set updatedAt
      *
+     * @ORM\PrePersist
      * @param \DateTime $updatedAt
      * @return Video
      */
     public function setUpdatedAt($updatedAt)
     {
-        $this->updatedAt = $updatedAt;
+        $this->updatedAt = new \DateTime();
 
         return $this;
     }

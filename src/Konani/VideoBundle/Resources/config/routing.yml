@@ -18,9 +18,9 @@ video_authenticate_google:
     path:     /authenticate_google/
     defaults: { _controller: KonaniVideoBundle:Video:authenticateGoogle }
 
-video_create_youtube_channel:
-    path:     /create_youtube_channel/
-    defaults: { _controller: KonaniVideoBundle:Video:createYoutubeChannel}
+#video_create_youtube_channel:
+#    path:     /create_youtube_channel/
+#    defaults: { _controller: KonaniVideoBundle:Video:createYoutubeChannel}
 
 video_upload_to_youtube_success:
     path:     /upload_to_youtube_/success/
@@ -29,3 +29,7 @@ video_upload_to_youtube_success:
 video_new_tag:
     path:     /new_tag/
     defaults: { _controller: KonaniVideoBundle:Video:newTag }
+
+video_tagged:
+    path:     /tagged/
+    defaults: { _controller: KonaniVideoBundle:Video:tagged}

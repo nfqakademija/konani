@@ -19,25 +19,20 @@ use Google_Http_MediaFileUpload;
 class GoogleClient
 {
     protected $parameters;
-    private $google_client;
-    private $redirect;
-    private $session;
+    protected $session;
+    protected $google_client;
 
     public function __construct($parameters, Router $router, Session $session)
     {
         $this->parameters = $parameters;
+        $this->session = $session;
 
         $this->google_client = new Google_Client();
-
         $this->google_client->setClientId($parameters['client_id']);
         $this->google_client->setClientSecret($parameters['client_secret']);
         $this->google_client->setScopes($parameters['scope']);
-
-        $this->setRedirect($router->generate('video_authenticate_google', array(), true));
-
-        $this->google_client->setRedirectUri($this->getRedirect());
-
-        $this->session = $session;
+        $this->google_client->setRedirectUri($router->generate('video_authenticate_google', array(), true));
+        //$this->google_client->refreshToken("test_token");
     }
     public function resetToken()
     {
@@ -71,18 +66,6 @@ class GoogleClient
         }
         return $return;
     }
-    public function setRedirect($redirect)
-    {
-        $this->redirect = $redirect;
-
-        return $this;
-    }
-
-    public function getRedirect()
-    {
-        return $this->redirect;
-    }
-
     public function getGoogleClient()
     {
         return $this->google_client;

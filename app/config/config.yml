@@ -4,11 +4,11 @@ imports:
 
 parameters:
     google_api:
-        client_id: "280501061710-2j8epiob932fvtd68srqsireedlm2fsa.apps.googleusercontent.com"
-        client_secret: "cuGHDBZ3LH6CURbVJs6XP-GE"
-        api_key: "AIzaSyCc9Xg77bjFNIgf2Q_DRt3ZlQqY3xW-vZI"
-        scope: "https://www.googleapis.com/auth/youtube"
-        privacy: "private"
+        client_id:      "280501061710-2j8epiob932fvtd68srqsireedlm2fsa.apps.googleusercontent.com"
+        client_secret:  "cuGHDBZ3LH6CURbVJs6XP-GE"
+        api_key:        "AIzaSyCc9Xg77bjFNIgf2Q_DRt3ZlQqY3xW-vZI"
+        scope:          "https://www.googleapis.com/auth/youtube"
+        privacy:        "private"
 
 framework:
     #esi:             ~
