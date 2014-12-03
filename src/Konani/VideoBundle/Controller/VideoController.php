@@ -33,6 +33,7 @@ class VideoController extends Controller
         $file = new File();
         $form = $this->createFormBuilder($file)
             ->add('name')
+            ->add('description', 'textarea')
             ->add('file')
             ->add('save','submit')
             ->getForm();
@@ -42,13 +43,11 @@ class VideoController extends Controller
             $file->setUser($this->getUser());
             $em->persist($file);
             $em->flush();
-
             return $this->redirect($this->generateUrl('video_uploaded'));
         }
-
         return $this->render('KonaniVideoBundle:Default:upload.html.twig', array(
-                'form' => $form->createView(),
-            ));
+            'form' => $form->createView(),
+        ));
     }
 
     /**
@@ -58,10 +57,7 @@ class VideoController extends Controller
      */
     public function uploadedAction()
     {
-        $uploadedVideos = $this->getDoctrine()
-            ->getRepository('KonaniVideoBundle:File')
-            ->findBy(array("user" => $this->getUser()));
-
+        $uploadedVideos = $this->getForUserByRepo('File');
         return $this->render('KonaniVideoBundle:Default:uploaded.html.twig', array(
                 'uploadedVideos' => $uploadedVideos
             ));
@@ -74,13 +70,23 @@ class VideoController extends Controller
      */
     public function taggedAction()
     {
-        $taggedVideos = $this->getDoctrine()
-            ->getRepository('KonaniVideoBundle:Video')
-            ->findBy(array("user" => $this->getUser()));
-
+        $taggedVideos = $this->getForUserByRepo('Video');
         return $this->render('KonaniVideoBundle:Default:tagged.html.twig', array(
                 'taggedVideos' => $taggedVideos
             ));
+    }
+
+    /**
+     * Returns all entities from given repository by user
+     *
+     * @param $repository
+     * @return array
+     */
+    private function getForUserByRepo($repository)
+    {
+        return $rows = $this->getDoctrine()
+            ->getRepository('KonaniVideoBundle:'.$repository)
+            ->findBy(array("user" => $this->getUser()));
     }
 
     /**
@@ -91,7 +97,6 @@ class VideoController extends Controller
     public function deleteUploadedAction($id)
     {
         $em = $this->getDoctrine()->getManager();
-
         try {
             $file = $this->getDoctrine()
                 ->getRepository('KonaniVideoBundle:File')
@@ -101,10 +106,8 @@ class VideoController extends Controller
                 'No video found for id '.$id
             );
         }
-
         $em->remove($file);
         $em->flush();
-
         return $this->redirect($this->generateUrl('video_uploaded'));
     }
 
@@ -116,19 +119,13 @@ class VideoController extends Controller
     {
         $my_client = $this->get('google_client');
         $client = $my_client->getGoogleClient();
-
         $code = $this->get('request')->get('code');
+        $state = $this->get('request')->get('state');
         if ($code) {
-            if (strval($this->get('session')->get('state')) !== strval($this->get('request')->get('state'))) {
-                die('The session state did not match.');
-            }
-
-            $client->authenticate($code);
-            $this->get('session')->set('token', $client->getAccessToken());
+            $my_client->authenticateToken($code, $state);
             return $this->redirect($this->generateUrl('video_authenticate_google'));
         }
         $my_client->resetToken();
-
         if (!$client->getAccessToken() || $client->isAccessTokenExpired()) {
             return $this->render(
                 'KonaniVideoBundle:Default:authenticateGoogle.html.twig',
@@ -137,7 +134,6 @@ class VideoController extends Controller
                 )
             );
         }
-
         $youtube = new Google_Service_YouTube($client);
         try {
             if ($my_client->getChannelLinked($youtube)) {
@@ -153,7 +149,6 @@ class VideoController extends Controller
         } catch (Google_Exception $e) {
             throw $this->createAccessDeniedException("An client error occurred: ".htmlspecialchars($e->getMessage()));
         }
-
         $this->get('session')->set('token', $client->getAccessToken());
         return $this->render('KonaniVideoBundle:Default:authenticateGoogle.html.twig', array());
     }
@@ -184,13 +179,10 @@ class VideoController extends Controller
     {
         $my_client = $this->get('google_client');
         $client = $my_client->getGoogleClient();
-
         $my_client->resetToken();
-
         $file = $this->getDoctrine()
             ->getRepository('KonaniVideoBundle:File')
             ->find($id);
-
         if (!$file) {
             throw $this->createNotFoundException(
                 'No video found for id ' . $id
@@ -199,18 +191,11 @@ class VideoController extends Controller
         if (!$client->getAccessToken() || $client->isAccessTokenExpired()) {
             return $this->redirect($this->generateUrl('video_authenticate_google'));
         }
-
         $youtube = new Google_Service_YouTube($client);
         try {
             if ($my_client->getChannelLinked($youtube)) {
-
-                $status = $my_client->uploadVideo($file, $youtube);
-                return $this->render(
-                    'KonaniVideoBundle:Default:uploadToYoutube.html.twig',
-                    array(
-                        'status' => $status,
-                    )
-                );
+                $my_client->uploadVideo($file, $youtube);
+                return $this->redirect($this->generateUrl('video_delete_uploaded', array('id'=>$id)));
             } else {
                 return $this->redirect($this->generateUrl('video_authenticate_google'));
             }
@@ -226,13 +211,10 @@ class VideoController extends Controller
     {
         $my_client = $this->get('google_client');
         $client = $my_client->getGoogleClient();
-
         $my_client->resetToken();
-
         if (!$client->getAccessToken() || $client->isAccessTokenExpired()) {
             return $this->redirect($this->generateUrl('video_authenticate_google'));
         }
-
         $youtube = new Google_Service_YouTube($client);
         try {
             $listVideos = $my_client->getClientVideos($youtube);
@@ -241,34 +223,29 @@ class VideoController extends Controller
         } catch (Google_Exception $e) {
             throw $this->createAccessDeniedException("An client error occurred: ".htmlspecialchars($e->getMessage()));
         }
-
         $video = new Video();
         $form = $this->createFormBuilder($video, array(
                 'attr'=> array(
                     'id' => 'newTag'
                 )
             ))
-                ->add('latitude', 'hidden')
-                ->add('longitude', 'hidden')
-                ->add('youtube_id', 'choice', array(
-                    'choices'   => $listVideos
-                    )
+            ->add('latitude', 'hidden')
+            ->add('longitude', 'hidden')
+            ->add('youtube_id', 'choice', array(
+                'choices'   => $listVideos
                 )
-                ->add('name')
-                ->add('description', 'textarea')
-                ->add('save','submit')
-                ->getForm();
+            )
+            ->add('save','submit')
+            ->getForm();
         $form->handleRequest($request);
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $video->setUser($this->getUser());
             $em->persist($video);
             $em->flush();
-
             return $this->redirect($this->generateUrl('video_tagged'));
         }
         $this->get('session')->set('token', $client->getAccessToken());
-
         return $this->render('KonaniVideoBundle:Default:newTag.html.twig', array(
                 'form' => $form->createView(),
             ));

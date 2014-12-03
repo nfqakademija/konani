@@ -31,16 +31,13 @@ class VideoAPIController extends Controller
                         'lng' => $video->getLongitude(),
                     ));
             }
-
         } catch (NoResultException $e) {
             throw $this->createNotFoundException(
                 'No videos found in given coordinates'
             );
         }
-
         $response = new JsonResponse();
         $response->setData($videosArray);
-
         return $response;
     }
 
@@ -70,10 +67,8 @@ class VideoAPIController extends Controller
         $videoArray['description'] = $searchResponse['items'][0]['snippet']['description'];
         $videoArray['youtube_id'] = $searchResponse['items'][0]['snippet']['id'];
         $videoArray['thumbnail'] = $searchResponse['items'][0]['snippet']['thumbnails']['default']['url'];
-
         $response = new JsonResponse();
         $response->setData($videoArray);
-
         return $response;
     }
 }

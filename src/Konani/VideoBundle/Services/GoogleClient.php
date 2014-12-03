@@ -32,6 +32,14 @@ class GoogleClient
         $this->google_client->setRedirectUri($router->generate('video_authenticate_google', array(), true));
         //$this->google_client->refreshToken("test_token");
     }
+    public function authenticateToken($code, $state)
+    {
+        if (strval($this->session->get('state')) !== strval($state)) {
+            die('The session state did not match.');
+        }
+        $this->google_client->authenticate($code);
+        $this->session->set('token', $this->google_client->getAccessToken());
+    }
     public function resetToken()
     {
         if ($this->session->get('token')) {
@@ -81,7 +89,7 @@ class GoogleClient
     {
         $snippet = new Google_Service_YouTube_VideoSnippet();
         $snippet->setTitle($file->GetName());
-        $snippet->setDescription("Another description");
+        $snippet->setDescription($file->GetDescription());
         $snippet->setTags(array("Snowboarder", "Symfony", "Google", "Youtube"));
         $snippet->setCategoryId("22");
         return $snippet;

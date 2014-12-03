@@ -11,11 +11,13 @@
         <table class="table">
             <tr>
                 <th>Name</th>
+                <th>Description</th>
                 <th>Actions</th>
             </tr>
         {% for video in uploadedVideos %}
             <tr>
                 <td>{{ video.name }}</td>
+                <td>{{ video.description }}</td>
                 <td>
                     <a class="btn btn-default btn-sm" href="{{ path('video_upload_to_youtube', {'id': video.id}) }}" >
                         <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Tag video
