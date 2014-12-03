@@ -2,6 +2,9 @@
     "app.js": [
         "../../../bower_components/bootstrap-sass-official/assets/javascripts/bootstrap.js"
     ],
+    "map.js": [
+        "map.js"
+    ],
     "jquery.js": [
         "../../../bower_components/jquery/dist/jquery.min.js"
     ]

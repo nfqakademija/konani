@@ -243,7 +243,11 @@ class VideoController extends Controller
         }
 
         $video = new Video();
-        $form = $this->createFormBuilder($video)
+        $form = $this->createFormBuilder($video, array(
+                'attr'=> array(
+                    'id' => 'newTag'
+                )
+            ))
                 ->add('latitude', 'hidden')
                 ->add('longitude', 'hidden')
                 ->add('youtube_id', 'choice', array(

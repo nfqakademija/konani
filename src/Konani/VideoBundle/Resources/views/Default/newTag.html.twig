@@ -2,14 +2,15 @@
 
 {% block body %}
     <div id="map-canvas"></div>
+    <div class="alert alert-dismissible hidden" role="alert">
+        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        Please tag video location by double clicking on the map.
+    </div>
     {{ form(form) }}
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/javascript"
-            src="https://maps.googleapis.com/maps/api/js?key={{ google_api.api_key }}&libraries=places">
-    </script>
     <script type="text/javascript">
 
         var map;
@@ -77,5 +78,7 @@
         }
 
         google.maps.event.addDomListener(window, 'load', initialize);
+
     </script>
+    <script src="{{ asset('js/map.js') }}"></script>
 {% endblock %}
