@@ -50,6 +50,30 @@ class VideoController extends Controller
         ));
     }
 
+    public function showAction($id)
+    {
+        $my_client = $this->get('google_client');
+        $client = $my_client->getGoogleClient();
+        $youtube = new Google_Service_YouTube($client);
+        try {
+            $video = $this->getDoctrine()
+                ->getRepository('KonaniVideoBundle:Video')
+                ->findOneBy(array(
+                        'id' => $id
+                    ));
+            $videoResponse = $youtube->videos->listVideos('snippet', array(
+                    'id' => $video->getYoutubeId(),
+                ));
+        } catch (NoResultException $e) {
+            throw $this->createNotFoundException(
+                'No video found for id '.$id
+            );
+        }
+        return $this->render('KonaniVideoBundle:Default:show.html.twig', array(
+                'video' => $videoResponse,
+                'coordinates' => $video,
+            ));
+    }
     /**
      * Lists all user uploaded locally videos
      *
