@@ -33,3 +33,12 @@ video_new_tag:
 video_tagged:
     path:     /tagged/
     defaults: { _controller: KonaniVideoBundle:Video:tagged}
+
+
+api_video_list_by_coords:
+    path:     /api/list_by_coords/{min_lat}/{max_lat}/{min_lng}/{max_lng}
+    defaults: { _controller: KonaniVideoBundle:VideoAPI:listVideosByCoords}
+
+api_video_one_by_id:
+    path:   /api/one_by_id/{id}
+    defaults: { _controller: KonaniVideoBundle:VideoAPI:videoById }

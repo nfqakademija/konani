@@ -27,6 +27,7 @@ class GoogleClient
         $this->google_client = new Google_Client();
         $this->google_client->setClientId($parameters['client_id']);
         $this->google_client->setClientSecret($parameters['client_secret']);
+        $this->google_client->setDeveloperKey($parameters['api_key']);
         $this->google_client->setScopes($parameters['scope']);
         $this->google_client->setRedirectUri($router->generate('video_authenticate_google', array(), true));
         //$this->google_client->refreshToken("test_token");
