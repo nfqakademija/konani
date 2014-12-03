@@ -1,22 +1,7 @@
 {% block map %}
         <div clas="row">
-            <div class="col-md-6 col-lg-6 col-sm-1">
-                <ul class="videos medium-block-grid-3 large-block-grid-3 small-block-grid-1">
-                    {% for video in videos %}
-                        <li>
-                            <div class="h4">{{ video.name }}</div>
-                            <img src="http://img.youtube.com/vi/lGLdHfCgS4/0.jpg">
-                        </li>
-                        <li>
-                            <div class="h4">{{ video.name }}</div>
-                            <img src="http://img.youtube.com/vi/lGLdHfCgS4/0.jpg">
-                        </li>
-                        <li>
-                            <div class="h4">{{ video.name }}</div>
-                            <img src="http://img.youtube.com/vi/lGLdHfCgS4/0.jpg">
-                        </li>
-                    {% endfor %}
-                </ul>
+            <div class="col-md-6 col-lg-6 col-sm-1 videos-row">
+
             </div>
             <div class="col-md-6 col-lg-6 col-sm-1">
                 <div id="map-canvas"></div>
@@ -26,26 +11,47 @@
     <script>
         $(document).ready(function() {
             var map = new GMaps({
-               div: '#map-canvas',
-               lat: {{ latitude }},
-               lng: {{ longitude }}
+                div: '#map-canvas',
+                lat: {{ latitude }},
+                lng: {{ longitude }},
+                bounds_changed: function(e) {
+                    mark = [];
+                    $.each(markers,function(key,val) {
+                        contains = map.getBounds().contains(val.getPosition());
+                        if (contains) {
+                            mark.push(val['id']);
+                        }
+                    });
+                    generateVideos(mark);
+
+                }
             });
+
+            var markers = [];
             {% for video in videos %}
-               map.addMarker({
-                   lat:  {{ video.latitude }},
-                   lng: {{ video.longitude }},
-                   title: '{{ video.name }}',
-                   click: function(e) {
-                       //alert('You clicked in this marker');
-                   },
-                   /*icon: {
-                       image: ""
-                   },*/
-                   infoWindow: {
-                       content: '<p>HTML Content</p>'
-                   }
-               });
+                markers.push(
+                    map.addMarker({
+                        lat:  {{ video.latitude }},
+                        lng: {{ video.longitude }},
+                        title: 'aaaaa',
+                        id: '{{ video.id }}',
+                        click: function(e) {
+                            console.log('You clicked in this marker');
+                        },
+                        infoWindow: {
+                             content: '<p>HTML Content</p>'
+                        }
+                    })
+                );
             {% endfor %}
+
+        function generateVideos(markers) {
+            $.post('{{ path('konani_video_json') }}',{'videos':markers},function(data) {
+               console.log(data);
+                $('.videos-row ul').remove();
+                $('.videos-row').append(data);
+            });
+        }
         });
     </script>
 

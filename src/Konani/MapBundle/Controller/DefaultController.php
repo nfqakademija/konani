@@ -25,4 +25,17 @@ class DefaultController extends Controller
             'videos' => $videos
         ));
     }
+
+    public function getVideosAction() {
+
+        $request = Request::createFromGlobals();
+        $videos = $request->request->get('videos');
+
+        $repository = $this->getDoctrine()
+            ->getRepository('KonaniVideoBundle:Video');
+        $videos = $repository->findById($videos);
+
+        return $this->render('KonaniMapBundle:Default:videos.html.twig',array('videos'=>$videos));
+    }
+
 }

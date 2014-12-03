@@ -12,6 +12,14 @@
         <link href="{{ asset('css/block_grid.css') }}" type="text/css" rel="stylesheet">
         <link href="{{ asset('css/maps.css') }}" type="text/css" rel="stylesheet">
 
+    {% endblock %}
+    {% block javascripts %}
+        <script src="{{ asset('js/jquery.js') }}"></script>
+        <script type="text/javascript"
+                src="https://maps.googleapis.com/maps/api/js?key={{ google_api.api_key }}&libraries=places">
+        </script>
+        <script src="{{ asset('js/jquery.js') }}"></script>
+        <script src="{{ asset('js/app.js') }}"></script>
         <script type="text/javascript" src="{{ asset('js/search.js') }}"></script>
         <script type="text/javascript" src="{{ asset('js/gmap3.min.js') }}"></script>
     {% endblock %}
@@ -41,13 +49,5 @@
     {% block body %}{% endblock %}
 </div>
 {% include 'footer.html.twig' %}
-{% block javascripts %}
-    <script src="{{ asset('js/jquery.js') }}"></script>
-    <script type="text/javascript"
-            src="https://maps.googleapis.com/maps/api/js?key={{ google_api.api_key }}&libraries=places">
-    </script>
-    <script src="{{ asset('js/jquery.js') }}"></script>
-    <script src="{{ asset('js/app.js') }}"></script>
-{% endblock %}
 </body>
 </html>
