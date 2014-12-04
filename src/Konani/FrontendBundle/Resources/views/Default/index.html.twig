@@ -2,13 +2,19 @@
 
 {% block body %}
     <div class="container video-grid">
-        <ul class="medium-block-grid-2 small-block-grid-1 large-block-grid-3">
-            <li><iframe width="300" height="230" src="//www.youtube.com/embed/W-QoakKxTjg" frameborder="0" allowfullscreen></iframe></li>
-            <li><iframe width="300" height="230" src="//www.youtube.com/embed/W-QoakKxTjg" frameborder="0" allowfullscreen></iframe></li>
-            <li><iframe width="300" height="230" src="//www.youtube.com/embed/W-QoakKxTjg" frameborder="0" allowfullscreen></iframe></li>
-            <li><iframe width="300" height="230" src="//www.youtube.com/embed/W-QoakKxTjg" frameborder="0" allowfullscreen></iframe></li>
-            <li><iframe width="300" height="230" src="//www.youtube.com/embed/W-QoakKxTjg" frameborder="0" allowfullscreen></iframe></li>
-            <li><iframe width="300" height="230" src="//www.youtube.com/embed/W-QoakKxTjg" frameborder="0" allowfullscreen></iframe></li>
-          </ul>
+        {% if videos|length > 0 %}
+            <h1>Videos near your location {{ city }}, {{ region }}</h1>
+            <ul class="medium-block-grid-2 small-block-grid-1 large-block-grid-3">
+                {% for video in videos %}
+                    <li><iframe width="300" height="230" src="//www.youtube.com/embed/{{ video.youtubeId }}" frameborder="0" allowfullscreen></iframe></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                Unable to determine your location.
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

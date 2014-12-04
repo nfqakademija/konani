@@ -65,7 +65,7 @@ class File
 
 
     /**
-     * @Assert\File(maxSize="6000000")
+     * @Assert\File(maxSize="256000000")
      */
     private $file;
 

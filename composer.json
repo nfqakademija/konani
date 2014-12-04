@@ -22,7 +22,8 @@
         "friendsofsymfony/user-bundle": "2.0.*@dev",
         "google/apiclient": "1.0.6-beta",
 
-        "doctrine/doctrine-fixtures-bundle": "2.2.*"
+        "doctrine/doctrine-fixtures-bundle": "2.2.*",
+        "beberlei/DoctrineExtensions": "dev-master"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
