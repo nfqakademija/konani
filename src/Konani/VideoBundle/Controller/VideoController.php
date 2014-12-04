@@ -70,7 +70,7 @@ class VideoController extends Controller
             );
         }
         return $this->render('KonaniVideoBundle:Default:show.html.twig', array(
-                'video' => $videoResponse,
+                'items' => $videoResponse->getItems(),
                 'coordinates' => $video,
             ));
     }
@@ -108,7 +108,7 @@ class VideoController extends Controller
      */
     private function getForUserByRepo($repository)
     {
-        return $rows = $this->getDoctrine()
+        return $this->getDoctrine()
             ->getRepository('KonaniVideoBundle:'.$repository)
             ->findBy(array("user" => $this->getUser()));
     }
@@ -219,11 +219,11 @@ class VideoController extends Controller
         try {
             if ($my_client->getChannelLinked($youtube)) {
                 $my_client->uploadVideo($file, $youtube);
-                return $this->redirect($this->generateUrl('video_delete_uploaded', array('id'=>$id)));
+                $this->get('session')->set('token', $client->getAccessToken());
+                return $this->redirect($this->generateUrl('video_delete_uploaded', array('id' => $id)));
             } else {
                 return $this->redirect($this->generateUrl('video_authenticate_google'));
             }
-            $this->get('session')->set('token', $client->getAccessToken());
         } catch (Google_Service_Exception $e) {
             throw $this->createAccessDeniedException("A service error occurred: ".htmlspecialchars($e->getMessage()));
         } catch (Google_Exception $e) {

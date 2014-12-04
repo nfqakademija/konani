@@ -183,12 +183,14 @@ class GoogleClient
         foreach ($channelsResponse['items'] as $channel) {
 
             $uploadsListId = $channel['contentDetails']['relatedPlaylists']['uploads'];
-            $playlistItemsResponse = $youtube->playlistItems->listPlaylistItems('snippet', array(
+            $playlistItemsResponse = $youtube->playlistItems->listPlaylistItems('snippet, status', array(
                     'playlistId' => $uploadsListId,
                     'maxResults' => 50
                 ));
             foreach ($playlistItemsResponse['items'] as $playlistItem) {
-                $return[$playlistItem['snippet']['resourceId']['videoId']] = $playlistItem['snippet']['title'];
+                if ($playlistItem['status']['privacyStatus']=='public') {
+                    $return[$playlistItem['snippet']['resourceId']['videoId']] = $playlistItem['snippet']['title'];
+                }
             }
         }
         return $return;

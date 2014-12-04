@@ -2,3 +2,6 @@ services:
     google_client:
         class: Konani\VideoBundle\Services\GoogleClient
         arguments: [%google_api%, @router, @session]
+
+    json_helper:
+        class: Konani\VideoBundle\Services\JsonHelper

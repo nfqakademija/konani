@@ -20,24 +20,16 @@ class VideoAPIController extends Controller
     public function listVideosByCoordsAction($min_lat, $max_lat, $min_lng, $max_lng)
     {
         try {
-            $videos = $this->getDoctrine()
+            $videosInMap = $this->getDoctrine()
                 ->getRepository('KonaniVideoBundle:Video')
                 ->findVideosByCoordinates($min_lat, $max_lat, $min_lng, $max_lng);
-            $videosArray = array();
-            foreach($videos as $video) {
-                array_push($videosArray, array(
-                        'id'  => $video->getId(),
-                        'lat' => $video->getLatitude(),
-                        'lng' => $video->getLongitude(),
-                    ));
-            }
         } catch (NoResultException $e) {
             throw $this->createNotFoundException(
                 'No videos found in given coordinates'
             );
         }
         $response = new JsonResponse();
-        $response->setData($videosArray);
+        $response->setData($this->get('json_helper')->createMarkers($videosInMap));
         return $response;
     }
 
