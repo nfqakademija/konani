@@ -1,3 +1,7 @@
 konani_map_search:
     path:     /search/
     defaults: { _controller: KonaniMapBundle:Default:index }
+
+konani_video_json:
+    path:     /video_json/
+    defaults: { _controller: KonaniMapBundle:Default:getVideos }
