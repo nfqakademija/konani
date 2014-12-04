@@ -14,7 +14,7 @@
                 div: '#map-canvas',
                 lat: {{ latitude }},
                 lng: {{ longitude }},
-                bounds_changed: function(e) {
+                dragend: function(e) {
                     mark = [];
                     $.each(markers,function(key,val) {
                         contains = map.getBounds().contains(val.getPosition());
@@ -24,6 +24,27 @@
                     });
                     generateVideos(mark);
 
+                },
+                zoom_changed: function(e) {
+                    mark = [];
+                    $.each(markers,function(key,val) {
+                        contains = map.getBounds().contains(val.getPosition());
+                        if (contains) {
+                            mark.push(val['id']);
+                        }
+                    });
+                    generateVideos(mark);
+
+                },
+                tilesloaded: function(e) {
+                    mark = [];
+                    $.each(markers,function(key,val) {
+                        contains = map.getBounds().contains(val.getPosition());
+                        if (contains) {
+                            mark.push(val['id']);
+                        }
+                    });
+                    generateVideos(mark);
                 }
             });
 
@@ -46,8 +67,11 @@
             {% endfor %}
 
         function generateVideos(markers) {
-            $.post('{{ path('konani_video_json') }}',{'videos':markers},function(data) {
-               console.log(data);
+            var data;
+            $.post('{{ path('konani_video_json') }}',{'videos':markers},function(visual) {
+                data = visual;
+            });
+            $(document).ajaxComplete(function(event,request, settings) {
                 $('.videos-row ul').remove();
                 $('.videos-row').append(data);
             });
