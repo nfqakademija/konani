@@ -151,48 +151,19 @@ class VideoController extends Controller
         }
         $my_client->resetToken();
         if (!$client->getAccessToken() || $client->isAccessTokenExpired()) {
-            return $this->render(
-                'KonaniVideoBundle:Default:authenticateGoogle.html.twig',
-                array(
-                    'authUrl' => $my_client->getAuthUrl(),
-                )
-            );
+            return $this->render('KonaniVideoBundle:Default:authenticateGoogle.html.twig',['authUrl' => $my_client->getAuthUrl()]);
         }
         $youtube = new Google_Service_YouTube($client);
         try {
-            if ($my_client->getChannelLinked($youtube)) {
-                return $this->render(
-                    'KonaniVideoBundle:Default:authenticateGoogle.html.twig',
-                    array(
-                        'channelLinked' => true,
-                    )
-                );
-            }
+            $channelLinked = $my_client->getChannelLinked($youtube);
         } catch (Google_Service_Exception $e) {
             throw $this->createAccessDeniedException("A service error occurred: ".htmlspecialchars($e->getMessage()));
         } catch (Google_Exception $e) {
             throw $this->createAccessDeniedException("An client error occurred: ".htmlspecialchars($e->getMessage()));
         }
         $this->get('session')->set('token', $client->getAccessToken());
-        return $this->render('KonaniVideoBundle:Default:authenticateGoogle.html.twig', array());
+        return $this->render('KonaniVideoBundle:Default:authenticateGoogle.html.twig',['channelLinked' => $channelLinked]);
     }
-    /*public function createYoutubeChannelAction()
-    {
-        $my_client = $this->get('google_client');
-        $client = $my_client->getGoogleClient();
-        //$youtube = new Google_Service_YouTube($client);
-        $my_client->resetToken();
-        $return = array();
-        if ($client->getAccessToken() && !$client->isAccessTokenExpired()) {
-            //$return = updateChannelPrivacyAction($client);
-            $this->get('session')->set('token', $client->getAccessToken());
-            return $this->render('KonaniVideoBundle:Default:createYoutubeChannel.html.twig', array(
-                    'params' => $return,
-                ));
-        } else {
-            return $this->redirect($this->generateUrl('video_authenticate_google'));
-        }
-    }*/
 
     /**
      * Uploads video to clients youtube channel
@@ -204,25 +175,18 @@ class VideoController extends Controller
         $my_client = $this->get('google_client');
         $client = $my_client->getGoogleClient();
         $my_client->resetToken();
-        $file = $this->getDoctrine()
-            ->getRepository('KonaniVideoBundle:File')
-            ->find($id);
+        $file = $this->getDoctrine()->getRepository('KonaniVideoBundle:File')->find($id);
         if (!$file) {
-            throw $this->createNotFoundException(
-                'No video found for id ' . $id
-            );
-        }
-        if (!$client->getAccessToken() || $client->isAccessTokenExpired()) {
-            return $this->redirect($this->generateUrl('video_authenticate_google'));
+            throw $this->createNotFoundException('No video found for id ' . $id);
         }
         $youtube = new Google_Service_YouTube($client);
         try {
-            if ($my_client->getChannelLinked($youtube)) {
+            if (!$client->getAccessToken() || $client->isAccessTokenExpired() || !$my_client->getChannelLinked($youtube)) {
+                return $this->redirect($this->generateUrl('video_authenticate_google'));
+            } else {
                 $my_client->uploadVideo($file, $youtube);
                 $this->get('session')->set('token', $client->getAccessToken());
-                return $this->redirect($this->generateUrl('video_delete_uploaded', array('id' => $id)));
-            } else {
-                return $this->redirect($this->generateUrl('video_authenticate_google'));
+                return $this->redirect($this->generateUrl('video_delete_uploaded', ['id' => $id]));
             }
         } catch (Google_Service_Exception $e) {
             throw $this->createAccessDeniedException("A service error occurred: ".htmlspecialchars($e->getMessage()));

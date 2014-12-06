@@ -40,14 +40,14 @@ class Video
     /**
      * @var string
      *
-     * @ORM\Column(name="latitude", type="string", length=255)
+     * @ORM\Column(name="latitude", type="float")
      */
     private $latitude;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="longitude", type="string", length=255)
+     * @ORM\Column(name="longitude", type="float")
      */
     private $longitude;
 
@@ -141,7 +141,7 @@ class Video
     /**
      * Set latitude
      *
-     * @param string $latitude
+     * @param float $latitude
      * @return Video
      */
     public function setLatitude($latitude)
@@ -154,7 +154,7 @@ class Video
     /**
      * Get latitude
      *
-     * @return string 
+     * @return float
      */
     public function getLatitude()
     {
@@ -164,7 +164,7 @@ class Video
     /**
      * Set longitude
      *
-     * @param string $longitude
+     * @param float $longitude
      * @return Video
      */
     public function setLongitude($longitude)
@@ -177,7 +177,7 @@ class Video
     /**
      * Get longitude
      *
-     * @return string 
+     * @return float
      */
     public function getLongitude()
     {
