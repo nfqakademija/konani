@@ -18,7 +18,7 @@
             </tr>
         {% for video in taggedVideos %}
             <tr>
-                <td><img src="http://img.youtube.com/vi/{{ video.youtubeId }}/1.jpg"/></td>
+                <td><img class="img-thumbnail" src="http://img.youtube.com/vi/{{ video.youtubeId }}/1.jpg"/></td>
                 <td>{{ video.latitude }}</td>
                 <td>{{ video.longitude }}</td>
                 <td>{{ video.createdAt|date("Y-m-d h:i") }}</td>

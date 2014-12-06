@@ -193,29 +193,16 @@ class GoogleClient
     public function getClientVideos($youtube)
     {
         $return = array();
-        $channelsResponse = $youtube->channels->listChannels(
-            'contentDetails',
-            array(
-                'mine' => 'true',
-            )
-        );
+        $channelsResponse = $youtube->channels->listChannels('contentDetails',['mine' => 'true']);
         foreach ($channelsResponse['items'] as $channel) {
-
             $uploadsListId = $channel['contentDetails']['relatedPlaylists']['uploads'];
-            $playlistItemsResponse = $youtube->playlistItems->listPlaylistItems(
-                'snippet, status',
-                array(
-                    'playlistId' => $uploadsListId,
-                    'maxResults' => 50
-                )
-            );
+            $playlistItemsResponse = $youtube->playlistItems->listPlaylistItems('snippet, status',['playlistId' => $uploadsListId,'maxResults' => 50]);
             foreach ($playlistItemsResponse['items'] as $playlistItem) {
                 if ($playlistItem['status']['privacyStatus'] == 'public') {
                     $return[$playlistItem['snippet']['resourceId']['videoId']] = $playlistItem['snippet']['title'];
                 }
             }
         }
-
         return $return;
     }
 
