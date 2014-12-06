@@ -89,8 +89,26 @@
                     var beachMarker = new google.maps.Marker({
                         position: myLatLng,
                         map: map,
-                        icon: icon
+                        icon: icon,
+                        draggable: false
                     });
+                    var infowindow = new google.maps.InfoWindow({
+                        content: ''
+                    });
+
+                    google.maps.event.addListener(beachMarker, 'click', function(e) {
+                        $.ajax({
+                            type: "POST",
+                            url: "{{ path('api_video_one_by_id') }}",
+                            data: { id: obj.id }
+                        })
+                        .success(function( data ) {
+                            infowindow.setContent('<h1><a href="/video/show/'+obj.id+'">'+data.title+'</a></h1><img src="'+data.thumbnail+'"/><p>'+data.description+'</p>');
+                        });
+
+                        infowindow.open(map,beachMarker);
+                    });
+
                     markers.push(beachMarker);
                 });
             });

@@ -8,7 +8,7 @@ parameters:
         client_secret:  "cuGHDBZ3LH6CURbVJs6XP-GE"
         api_key:        "AIzaSyCc9Xg77bjFNIgf2Q_DRt3ZlQqY3xW-vZI"
         scope:          "https://www.googleapis.com/auth/youtube"
-        privacy:        "private"
+        privacy:        "public"
 
 framework:
     #esi:             ~
