@@ -45,7 +45,7 @@
         // Creates map marker
         function createMarker(point,html)
         {
-            var marker=new google.maps.Marker({map:map,position:point,draggable:true});
+            var marker=new google.maps.Marker({map:map,position:point,draggable:true,icon:"{{ asset ('img/video_icon.png') }}"});
             markers.push(marker);
             return marker;
         }

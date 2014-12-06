@@ -3,7 +3,7 @@
 {% block body %}
     <h1>My Uploaded Videos</h1>
     <a class="btn btn-default" href="{{ path('video_upload') }}" >
-        <span class="glyphicon glyphicon-hd-video" aria-hidden="true"></span> Upload video
+        <span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span> Upload video
     </a>
     <br><br>
 
@@ -20,7 +20,7 @@
                 <td>{{ video.description }}</td>
                 <td>
                     <a class="btn btn-default btn-sm" href="{{ path('video_upload_to_youtube', {'id': video.id}) }}" >
-                        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Tag video
+                        <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Upload to Youtube
                     </a>
                     <a class="btn btn-danger btn-sm" href="{{ path('video_delete_uploaded', {'id': video.id}) }}" >
                         <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete video

@@ -41,19 +41,86 @@
             map = new google.maps.Map(document.getElementById('map-canvas'),
                     mapOptions);
 
-            var markernew = createMarker(new google.maps.LatLng({{ coordinates.latitude }}, {{ coordinates.longitude}}),'');
-            markers.push(markernew);
+            //var markernew = createMarker(new google.maps.LatLng({{ coordinates.latitude }}, {{ coordinates.longitude}}),'');
+            //markers.push(markernew);
+
+            google.maps.event.addListener(map, 'idle', function(){
+                getVideos(map,this.getBounds(),map.getZoom());
+            });
+
         }
+
+        google.maps.event.addDomListener(window, 'load', initialize);
 
         // Creates map marker
         function createMarker(point,html)
         {
-            var marker=new google.maps.Marker({map:map,position:point,draggable:true});
+            var marker=new google.maps.Marker({map:map,position:point,draggable:true,icon:"{{ asset ('img/video_icon_current.png') }}" });
             markers.push(marker);
             return marker;
         }
 
-        google.maps.event.addDomListener(window, 'load', initialize);
+        function getVideos(map,bounds,zoom){
+
+            deleteOverlays();
+
+            var southWest=bounds.getSouthWest();
+            var northEast=bounds.getNorthEast();
+            var lngSpan=northEast.lng()-southWest.lng();
+            var latSpan=northEast.lat()-southWest.lat();
+
+            var lt1=southWest.lat();
+            var lt2=southWest.lat()+latSpan
+            var lng1=southWest.lng();
+            var lng2=southWest.lng()+lngSpan;
+
+            $.ajax({
+                type: "POST",
+                url: "{{ path('api_video_list_by_coords') }}",
+                data: { min_lat: lt1, max_lat: lt2, min_lng: lng1, max_lng: lng2, zoom: zoom }
+            })
+            .success(function( data ) {
+                $.each(data, function(key, obj) {
+                    var icon = '';
+                    if (obj.lat == "{{ coordinates.latitude }}" && obj.lng == "{{ coordinates.longitude }}") {
+                        icon = "{{ asset('img/video_icon_current.png') }}";
+                    } else {
+                        icon = "{{ asset('img/video_icon.png') }}";
+                    }
+                    var lat = obj.lat;
+                    var lng = obj.lng;
+                    var myLatLng = new google.maps.LatLng(lat, lng);
+                    var beachMarker = new google.maps.Marker({
+                        position: myLatLng,
+                        map: map,
+                        icon: icon
+                    });
+                    markers.push(beachMarker);
+                });
+            });
+         }
+
+
+        // Sets the map on all markers in the array.
+        function setAllMap(map) {
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setMap(map);
+            }
+        }
+
+        // Removes the overlays from the map, but keeps them in the array.
+        function clearOverlays() {
+            setAllMap(null);
+        }
+
+        // Deletes all markers in the array by removing references to them.
+        function deleteOverlays() {
+            clearOverlays();
+            markers = [];
+        }
+
+
+
 
     </script>
 {% endblock %}

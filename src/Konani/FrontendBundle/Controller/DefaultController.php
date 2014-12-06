@@ -3,7 +3,8 @@
 namespace Konani\FrontendBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Intl\Exception\InvalidArgumentException;
+
+use Google_Service_YouTube;
 
 class DefaultController extends Controller
 {
@@ -17,14 +18,33 @@ class DefaultController extends Controller
             $region = $details->region;
             $latLng = explode(",",$details->loc);
             $videos = $this->getDoctrine()->getRepository('KonaniVideoBundle:Video')->findClosestVideos($latLng[0],$latLng[1],9,100);
-        }
-        return $this->render('FrontendBundle:Default:index.html.twig',
-            array(
-                'city' => isset($city) ? $city : "",
-                'region' => isset($region) ? $region : "",
-                'videos' => isset($videos) ? $videos : "",
-            )
-        );
-    }
 
+            $mergedVideos = [];
+            if (count($videos) > 0) {
+                //$id_string = "";
+                $my_client = $this->get('google_client');
+                $client = $my_client->getGoogleClient();
+                $youtube = new Google_Service_YouTube($client);
+
+                foreach($videos as $video) {
+                    //$id_string .= $video->getYoutubeId() . "," ;
+                    $searchResponse = $youtube->videos->listVideos('snippet', [
+                            'id' => $video->getYoutubeId(),
+                        ]);
+
+                    if ($searchResponse['pageInfo']['totalResults']) {
+                        $mergedVideos[$video->getId()] = $searchResponse['items'][0];
+                    }
+                }
+            }
+            return $this->render('FrontendBundle:Default:index.html.twig',
+                [
+                    'city' => $city,
+                    'region' => $region,
+                    'videos' => $mergedVideos,
+                ]
+            );
+        }
+        return $this->render('FrontendBundle:Default:index.html.twig');
+    }
 }

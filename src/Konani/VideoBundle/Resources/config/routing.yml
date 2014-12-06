@@ -40,8 +40,10 @@ video_page:
 
 
 api_video_list_by_coords:
-    path:     /api/list_by_coords/{min_lat}/{max_lat}/{min_lng}/{max_lng}
+    path:     /api/list_by_coords/
     defaults: { _controller: KonaniVideoBundle:VideoAPI:listVideosByCoords}
+#    requirements:
+#        _method:  POST
 
 api_video_one_by_id:
     path:   /api/one_by_id/{id}
