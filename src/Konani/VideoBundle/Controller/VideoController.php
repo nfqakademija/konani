@@ -233,6 +233,8 @@ class VideoController extends Controller
 
     public function newTagAction(Request $request)
     {
+        //$ip = $this->get('request')->getClientIp();
+        $ip = "86.38.9.252";
         $my_client = $this->get('google_client');
         $client = $my_client->getGoogleClient();
         $my_client->resetToken();
@@ -272,6 +274,7 @@ class VideoController extends Controller
         $this->get('session')->set('token', $client->getAccessToken());
         return $this->render('KonaniVideoBundle:Default:newTag.html.twig', array(
                 'form' => $form->createView(),
+                'location' => $this->get('location')->getMyLocation($ip),
             ));
     }
 }

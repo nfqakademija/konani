@@ -10,7 +10,7 @@
     {% if taggedVideos is defined %}
         <table class="table">
             <tr>
-                <th>ID</th>
+                <th>Video</th>
                 <th>Latitude</th>
                 <th>Longitude</th>
                 <th>Created At</th>
@@ -18,7 +18,7 @@
             </tr>
         {% for video in taggedVideos %}
             <tr>
-                <td>{{ video.youtubeId }}</td>
+                <td><img src="http://img.youtube.com/vi/{{ video.youtubeId }}/1.jpg"/></td>
                 <td>{{ video.latitude }}</td>
                 <td>{{ video.longitude }}</td>
                 <td>{{ video.createdAt|date("Y-m-d h:i") }}</td>

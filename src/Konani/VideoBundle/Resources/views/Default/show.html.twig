@@ -87,9 +87,7 @@
                     } else {
                         icon = "{{ asset('img/video_icon.png') }}";
                     }
-                    var lat = obj.lat;
-                    var lng = obj.lng;
-                    var myLatLng = new google.maps.LatLng(lat, lng);
+                    var myLatLng = new google.maps.LatLng(obj.lat, obj.lng);
                     var beachMarker = new google.maps.Marker({
                         position: myLatLng,
                         map: map,
@@ -118,9 +116,6 @@
             clearOverlays();
             markers = [];
         }
-
-
-
 
     </script>
 {% endblock %}

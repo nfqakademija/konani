@@ -16,6 +16,6 @@ $( '#newTag' ).submit(function( event ) {
         $('.alert').addClass('alert-danger').removeClass('hidden');
         event.preventDefault();
     } else {
-        $('.allert').addClass('hidden');
+        $('.alert').addClass('hidden');
     }
 });

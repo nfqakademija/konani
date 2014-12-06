@@ -1,7 +1,16 @@
 services:
+
+    get_set_method_normalizer:
+      class: Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer
+      tags:
+         - { name: serializer.normalizer }
+
     google_client:
         class: Konani\VideoBundle\Services\GoogleClient
-        arguments: [%google_api%, @router, @session]
+        arguments: [%google_api%, @router, @session, @serializer.encoder.json]
 
     json_helper:
         class: Konani\VideoBundle\Services\JsonHelper
+
+    location:
+        class: Konani\VideoBundle\Services\Location

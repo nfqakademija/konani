@@ -5,6 +5,8 @@ namespace Konani\VideoBundle\Services;
 use Symfony\Component\Routing\Router;
 use Symfony\Component\HttpFoundation\Session\Session;
 
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+
 use Google_Client;
 
 use Google_Service_YouTube_VideoSnippet;
@@ -18,11 +20,13 @@ class GoogleClient
     protected $parameters;
     protected $session;
     protected $google_client;
+    protected $jsonEncoder;
 
-    public function __construct($parameters, Router $router, Session $session)
+    public function __construct($parameters, Router $router, Session $session, JsonEncoder $jsonEncoder)
     {
         $this->parameters = $parameters;
         $this->session = $session;
+        $this->jsonEncoder = $jsonEncoder;
 
         $this->google_client = new Google_Client();
         $this->google_client->setClientId($parameters['client_id']);
@@ -32,6 +36,7 @@ class GoogleClient
         $this->google_client->setRedirectUri($router->generate('video_authenticate_google', array(), true));
         //$this->google_client->refreshToken("test_token");
     }
+
     public function authenticateToken($code, $state)
     {
         if (strval($this->session->get('state')) !== strval($state)) {
@@ -40,12 +45,14 @@ class GoogleClient
         $this->google_client->authenticate($code);
         $this->session->set('token', $this->google_client->getAccessToken());
     }
+
     public function resetToken()
     {
         if ($this->session->get('token')) {
             $this->google_client->setAccessToken($this->session->get('token'));
         }
     }
+
     public function getAuthUrl()
     {
         $state = mt_rand();
@@ -63,16 +70,22 @@ class GoogleClient
      */
     public function getChannelLinked($youtube)
     {
-        $channelsResponse = $youtube->channels->listChannels('status', array(
+        $channelsResponse = $youtube->channels->listChannels(
+            'status',
+            array(
                 'mine' => 'true',
-            ));
+            )
+        );
 
-        if ($channelsResponse['items'][0]['status']->getIsLinked() && $channelsResponse['items'][0]['status']->getPrivacyStatus() == 'public') {
+        if ($channelsResponse['items'][0]['status']->getIsLinked(
+            ) && $channelsResponse['items'][0]['status']->getPrivacyStatus() == 'public'
+        ) {
             return true;
         }
 
         return false;
     }
+
     public function getGoogleClient()
     {
         return $this->google_client;
@@ -92,6 +105,7 @@ class GoogleClient
         $snippet->setDescription($file->GetDescription());
         $snippet->setTags(array("Snowboarder", "Symfony", "Google", "Youtube"));
         $snippet->setCategoryId("22");
+
         return $snippet;
     }
 
@@ -104,6 +118,7 @@ class GoogleClient
     {
         $status = new Google_Service_YouTube_VideoStatus();
         $status->privacyStatus = $privacy;
+
         return $status;
     }
 
@@ -118,6 +133,7 @@ class GoogleClient
         $video = new Google_Service_YouTube_Video();
         $video->setSnippet($snippet);
         $video->setStatus($status);
+
         return $video;
     }
 
@@ -177,22 +193,75 @@ class GoogleClient
     public function getClientVideos($youtube)
     {
         $return = array();
-        $channelsResponse = $youtube->channels->listChannels('contentDetails', array(
+        $channelsResponse = $youtube->channels->listChannels(
+            'contentDetails',
+            array(
                 'mine' => 'true',
-            ));
+            )
+        );
         foreach ($channelsResponse['items'] as $channel) {
 
             $uploadsListId = $channel['contentDetails']['relatedPlaylists']['uploads'];
-            $playlistItemsResponse = $youtube->playlistItems->listPlaylistItems('snippet, status', array(
+            $playlistItemsResponse = $youtube->playlistItems->listPlaylistItems(
+                'snippet, status',
+                array(
                     'playlistId' => $uploadsListId,
                     'maxResults' => 50
-                ));
+                )
+            );
             foreach ($playlistItemsResponse['items'] as $playlistItem) {
-                if ($playlistItem['status']['privacyStatus']=='public') {
+                if ($playlistItem['status']['privacyStatus'] == 'public') {
                     $return[$playlistItem['snippet']['resourceId']['videoId']] = $playlistItem['snippet']['title'];
                 }
             }
         }
+
         return $return;
+    }
+
+    public function getProvidedVideos($repositoryVideos, $youtube)
+    {
+        $mergedVideos = [];
+        foreach ($repositoryVideos as $repositoryVideo) {
+            $searchResponse = $youtube->videos->listVideos(
+                'snippet',
+                [
+                    'id' => $repositoryVideo->getYoutubeId(),
+                ]
+            );
+
+            if ($searchResponse['pageInfo']['totalResults']) {
+                $mergedVideos[$repositoryVideo->getId()]['youtube'] = $searchResponse['items'][0];
+                $mergedVideos[$repositoryVideo->getId()]['location'] = $this->getNearbyPlace(
+                    $repositoryVideo->getLatitude(),
+                    $repositoryVideo->getLongitude()
+                );
+            }
+        }
+
+        return $mergedVideos;
+    }
+
+    private function getNearbyPlace($lat, $lng)
+    {
+        $json = sprintf(
+            "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%s,%s&rankby=distance&minprice=0&maxprice=0&types=%s&key=%s",
+            $lat,
+            $lng,
+            $this->getPlacesTypes(),
+            $this->parameters['api_key']
+        );
+        $places = $this->jsonEncoder->decode(file_get_contents($json), 'json');
+        if (count($places['results']) > 0) {
+
+            return array('name' => $places['results'][0]['name'], 'address' => $places['results'][0]['vicinity']);
+        }
+        return null;
+    }
+
+    private function getPlacesTypes()
+    {
+        $types = "airport|amusement_park|aquarium|art_gallery|bakery|bank|bar|beauty_salon|bicycle_store|book_store|bowling_alley|bus_station|cafe|campground|car_dealer|car_rental|car_repair|car_wash|casino|cemetery|church|city_hall|clothing_store|convenience_store|courthouse|dentist|department_store|doctor|electrician|electronics_store|embassy|establishment|finance|fire_station|florist|food|funeral_home|furniture_store|gas_station|general_contractor|grocery_or_supermarket|gym|hair_care|hardware_store|health|hindu_temple|home_goods_store|hospital|insurance_agency|jewelry_store|laundry|lawyer|library|liquor_store|local_government_office|locksmith|lodging|meal_delivery|meal_takeaway|mosque|movie_rental|movie_theater|moving_company|museum|night_club|painter|park|parking|pet_store|pharmacy|physiotherapist|place_of_worship|plumber|police|post_office|real_estate_agency|restaurant|roofing_contractor|rv_park|school|shoe_store|shopping_mall|spa|stadium|storage|store|subway_station|synagogue|taxi_stand|train_station|travel_agency|university|veterinary_care|zoo";
+        return $types;
     }
 }
