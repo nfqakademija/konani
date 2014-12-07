@@ -68,9 +68,9 @@ class VideoAPIController extends Controller
             'description' => $searchResponse['description'],
             'youtube_id' => $searchResponse['id'],
             'thumbnail' => [
-                'url' => $searchResponse['thumbnails']['medium']['url'],
-                'width' => $searchResponse['thumbnails']['medium']['width'],
-                'height' => $searchResponse['thumbnails']['medium']['height'],
+                'url' => $searchResponse['thumbnails']['default']['url'],
+                'width' => $searchResponse['thumbnails']['default']['width'],
+                'height' => $searchResponse['thumbnails']['default']['height'],
             ]
         ];
         return $videoArray;

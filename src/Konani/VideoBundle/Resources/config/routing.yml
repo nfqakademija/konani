@@ -37,6 +37,8 @@ video_tagged:
 video_page:
     path:     /show/{id}
     defaults: { _controller: KonaniVideoBundle:Video:show}
+    options:
+        expose: true
 
 
 api_video_list_by_coords:

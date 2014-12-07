@@ -30,7 +30,6 @@
 
         var map;
         var markers = [];
-        var newMarkers = [];
 
         // Initializes google map
         function initialize() {
@@ -50,11 +49,15 @@
         google.maps.event.addDomListener(window, 'load', initialize);
 
         // Creates map marker
-        function createMarker(point,html)
+        function createMarker(point,icon)
         {
-            var marker=new google.maps.Marker({map:map,position:point,draggable:true,icon:"{{ asset ('img/video_icon_current.png') }}" });
-            markers.push(marker);
-            return marker;
+            var videoMarker = new google.maps.Marker({
+                position: point,
+                //map: map,
+                icon: icon,
+                draggable: false
+            });
+            return videoMarker;
         }
 
         function getVideos(map,bounds,zoom){
@@ -65,7 +68,7 @@
             var latSpan=northEast.lat()-southWest.lat();
 
             var lt1=southWest.lat();
-            var lt2=southWest.lat()+latSpan
+            var lt2=southWest.lat()+latSpan;
             var lng1=southWest.lng();
             var lng2=southWest.lng()+lngSpan;
 
@@ -76,20 +79,13 @@
             })
             .success(function( data ) {
                 $.each(data, function(key, obj) {
-                    var icon = '';
                     if (obj.lat == "{{ coordinates.latitude }}" && obj.lng == "{{ coordinates.longitude }}") {
-                        icon = "{{ asset('img/video_icon_current.png') }}";
+                        var icon = "{{ asset('img/video_icon_current.png') }}";
                     } else {
-                        icon = "{{ asset('img/video_icon.png') }}";
+                        var icon = "{{ asset('img/video_icon.png') }}";
                     }
                     var myLatLng = new google.maps.LatLng(obj.lat, obj.lng);
-
-                    var beachMarker = new google.maps.Marker({
-                        position: myLatLng,
-                        //map: map,
-                        icon: icon,
-                        draggable: false
-                    });
+                    var beachMarker = createMarker(myLatLng,icon);
 
                     if (!markerExists(beachMarker)) {
                         beachMarker.setMap(map);
@@ -100,7 +96,7 @@
                         })
                         .success(function( data ) {
                             var infowindow = new google.maps.InfoWindow({
-                                content: '<h1><a href="/video/show/'+data.id+'">'+data.title+'</a></h1><img height="'+data.thumbnail.height+'" width="'+data.thumbnail.width+'" src="'+data.thumbnail.url+'"/><p>'+data.description+'</p>'
+                                content: '<a href="/video/show/'+data.id+'">'+data.title+'</a><br><br><a href="'+Routing.generate('video_page', { id: data.id })+'"><img class="img-thumbnail" height="'+data.thumbnail.height+'" width="'+data.thumbnail.width+'" src="'+data.thumbnail.url+'"/></a>'
                             });
                             google.maps.event.addListener(beachMarker, 'click', function() {
                                 infowindow.open(map,beachMarker);
@@ -110,7 +106,6 @@
                     }
                 });
                 removeInvisibleMarkers();
-                console.log(markers);
             });
          }
 
@@ -140,7 +135,6 @@
             });
             return exist;
         }
-
 
         // Sets the map on all markers in the array.
         function setAllMap(map) {
