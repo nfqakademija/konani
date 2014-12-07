@@ -38,14 +38,14 @@ class Video
     private $userId;
 
     /**
-     * @var string
+     * @var float
      *
      * @ORM\Column(name="latitude", type="float")
      */
     private $latitude;
 
     /**
-     * @var string
+     * @var float
      *
      * @ORM\Column(name="longitude", type="float")
      */
