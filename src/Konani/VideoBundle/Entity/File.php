@@ -63,9 +63,12 @@ class File
      */
     protected $user;
 
-
     /**
-     * @Assert\File(maxSize="256000000")
+     * @Assert\File(maxSize="256000000",
+     *     mimeTypes = {"video/msvideo", "video/mp4", "video/mpeg", "video/x-ms-wmv", "video/quicktime", "video/avi", "video/x-flv", "video/3gpp", "application/x-mpegURL", "video/quicktime"},
+     *     maxSizeMessage = "The maximum allowed file size is 256MB.",
+     *     mimeTypesMessage = "Only the video files are allowed."
+     * )
      */
     private $file;
 

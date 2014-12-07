@@ -183,4 +183,37 @@ class User extends BaseUser
     {
         return $this->videos;
     }
+
+    /**
+     * Add Files
+     *
+     * @param \Konani\VideoBundle\Entity\File $file
+     * @return User
+     */
+    public function addFile(\Konani\VideoBundle\Entity\File $file)
+    {
+        $this->files[] = $file;
+
+        return $this;
+    }
+
+    /**
+     * Remove files
+     *
+     * @param \Konani\VideoBundle\Entity\File $file
+     */
+    public function removeFile(\Konani\VideoBundle\Entity\File $file)
+    {
+        $this->files->removeElement($file);
+    }
+
+    /**
+     * Get files
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getFiles()
+    {
+        return $this->files;
+    }
 }

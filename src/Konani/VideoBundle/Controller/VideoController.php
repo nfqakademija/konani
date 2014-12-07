@@ -16,7 +16,7 @@ use Konani\VideoBundle\Entity\File;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Controls videos actions - add new, edit, delete, upload, upload to youtube...
+ * Controls videos actions - add new, edit, delete, upload to server, upload to youtube...
  *
  * Class VideoController
  * @package Konani\VideoBundle\Controller
@@ -81,9 +81,8 @@ class VideoController extends Controller
      */
     public function uploadedAction()
     {
-        $uploadedVideos = $this->getForUserByRepo('File');
         return $this->render('KonaniVideoBundle:Default:uploaded.html.twig', array(
-                'uploadedVideos' => $uploadedVideos
+                'uploadedVideos' => $this->getUser()->getFiles()
             ));
     }
 
@@ -94,23 +93,9 @@ class VideoController extends Controller
      */
     public function taggedAction()
     {
-        $taggedVideos = $this->getForUserByRepo('Video');
         return $this->render('KonaniVideoBundle:Default:tagged.html.twig', array(
-                'taggedVideos' => $taggedVideos
+                'taggedVideos' => $this->getUser()->getVideos()
             ));
-    }
-
-    /**
-     * Returns all entities from given repository by user
-     *
-     * @param $repository
-     * @return array
-     */
-    private function getForUserByRepo($repository)
-    {
-        return $this->getDoctrine()
-            ->getRepository('KonaniVideoBundle:'.$repository)
-            ->findBy(array("user" => $this->getUser()));
     }
 
     /**
