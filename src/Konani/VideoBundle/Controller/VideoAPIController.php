@@ -38,9 +38,6 @@ class VideoAPIController extends Controller
     public function videoByIdAction(Request $request)
     {
         $id = $request->get('id');
-        $videoArray = [
-            'id' => $id,
-        ];
         $my_client = $this->get('google_client');
         $client = $my_client->getGoogleClient();
         $youtube = new Google_Service_YouTube($client);
@@ -58,12 +55,24 @@ class VideoAPIController extends Controller
                 'No video found for id '.$id
             );
         }
-        $videoArray['title'] = $searchResponse['items'][0]['snippet']['title'];
-        $videoArray['description'] = $searchResponse['items'][0]['snippet']['description'];
-        $videoArray['youtube_id'] = $searchResponse['items'][0]['snippet']['id'];
-        $videoArray['thumbnail'] = $searchResponse['items'][0]['snippet']['thumbnails']['default']['url'];
         $response = new JsonResponse();
-        $response->setData($videoArray);
+        $response->setData($this->videoArrayFromResponseAction($id, $searchResponse['items'][0]['snippet']));
         return $response;
+    }
+
+    private function videoArrayFromResponseAction($id,$searchResponse)
+    {
+        $videoArray = [
+            'id' => $id,
+            'title' => $searchResponse['title'],
+            'description' => $searchResponse['description'],
+            'youtube_id' => $searchResponse['id'],
+            'thumbnail' => [
+                'url' => $searchResponse['thumbnails']['medium']['url'],
+                'width' => $searchResponse['thumbnails']['medium']['width'],
+                'height' => $searchResponse['thumbnails']['medium']['height'],
+            ]
+        ];
+        return $videoArray;
     }
 }

@@ -19,3 +19,11 @@ $( '#newTag' ).submit(function( event ) {
         $('.alert').addClass('hidden');
     }
 });
+
+$( document ).ajaxStart(function() {
+    $( '#ajax_loading' ).show();
+});
+
+$( document ).ajaxStop(function() {
+    $( '#ajax_loading' ).hide();
+});

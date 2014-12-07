@@ -10,6 +10,7 @@
                     <p>{{ item.snippet.description }}</p>
                 </div>
                 <div class="col-lg-6">
+                    <div id="ajax_loading"><img src="{{ asset('img/ajax-loader.gif') }}" width="220" height="19"></div>
                     <div id="map-canvas"></div>
                 </div>
             {% endfor %}
@@ -29,6 +30,7 @@
 
         var map;
         var markers = [];
+        var newMarkers = [];
 
         // Initializes google map
         function initialize() {
@@ -38,9 +40,6 @@
             };
             map = new google.maps.Map(document.getElementById('map-canvas'),
                     mapOptions);
-
-            //var markernew = createMarker(new google.maps.LatLng({{ coordinates.latitude }}, {{ coordinates.longitude}}),'');
-            //markers.push(markernew);
 
             google.maps.event.addListener(map, 'idle', function(){
                 getVideos(map,this.getBounds(),map.getZoom());
@@ -59,8 +58,6 @@
         }
 
         function getVideos(map,bounds,zoom){
-
-            deleteOverlays();
 
             var southWest=bounds.getSouthWest();
             var northEast=bounds.getNorthEast();
@@ -86,33 +83,63 @@
                         icon = "{{ asset('img/video_icon.png') }}";
                     }
                     var myLatLng = new google.maps.LatLng(obj.lat, obj.lng);
+
                     var beachMarker = new google.maps.Marker({
                         position: myLatLng,
-                        map: map,
+                        //map: map,
                         icon: icon,
                         draggable: false
                     });
-                    var infowindow = new google.maps.InfoWindow({
-                        content: ''
-                    });
 
-                    google.maps.event.addListener(beachMarker, 'click', function(e) {
+                    if (!markerExists(beachMarker)) {
+                        beachMarker.setMap(map);
                         $.ajax({
                             type: "POST",
                             url: "{{ path('api_video_one_by_id') }}",
                             data: { id: obj.id }
                         })
                         .success(function( data ) {
-                            infowindow.setContent('<h1><a href="/video/show/'+obj.id+'">'+data.title+'</a></h1><img src="'+data.thumbnail+'"/><p>'+data.description+'</p>');
+                            var infowindow = new google.maps.InfoWindow({
+                                content: '<h1><a href="/video/show/'+data.id+'">'+data.title+'</a></h1><img height="'+data.thumbnail.height+'" width="'+data.thumbnail.width+'" src="'+data.thumbnail.url+'"/><p>'+data.description+'</p>'
+                            });
+                            google.maps.event.addListener(beachMarker, 'click', function() {
+                                infowindow.open(map,beachMarker);
+                            });
                         });
-
-                        infowindow.open(map,beachMarker);
-                    });
-
-                    markers.push(beachMarker);
+                        markers.push(beachMarker);
+                    }
                 });
+                removeInvisibleMarkers();
+                console.log(markers);
             });
          }
+
+        function removeInvisibleMarkers()
+        {
+            $.each(markers, function (key, marker) {
+                if (typeof marker !== 'undefined') {
+                    // if already not in bounds
+                    if (!map.getBounds().contains(marker.getPosition())) {
+                        // delete marker
+                        markers[key].setMap(null);
+                        delete markers[key];
+                    }
+                }
+            });
+        }
+
+        function markerExists(newMarker)
+        {
+            var exist = false;
+            $.each(markers, function(key,marker){
+                if (typeof marker !== 'undefined') {
+                    if ((marker.getPosition().lat() == newMarker.getPosition().lat()) && (marker.getPosition().lng() == newMarker.getPosition().lng())) {
+                        exist = true;
+                    }
+                }
+            });
+            return exist;
+        }
 
 
         // Sets the map on all markers in the array.
