@@ -12,6 +12,7 @@
         <link href="{{ asset('css/block_grid.css') }}" type="text/css" rel="stylesheet">
         <link href="{{ asset('css/maps.css') }}" type="text/css" rel="stylesheet">
         <link href="{{ asset('css/forms.css') }}" type="text/css" rel="stylesheet">
+        <link href="{{ asset('css/show.css') }}" type="text/css" rel="stylesheet">
 
     {% endblock %}
     {% block javascripts %}
@@ -24,6 +25,8 @@
         <script type="text/javascript" src="{{ asset('js/search.js') }}"></script>
         <script type="text/javascript" src="{{ asset('js/gmap3.min.js') }}"></script>
         <script type="text/javascript" src="{{ asset('js/sticky_footer.js') }}"></script>
+        <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+        <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
     {% endblock %}
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
