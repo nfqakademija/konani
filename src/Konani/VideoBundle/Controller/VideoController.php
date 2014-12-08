@@ -120,6 +120,11 @@ class VideoController extends Controller
         return $this->redirect($this->generateUrl('video_uploaded'));
     }
 
+    public function deleteTaggedAction($id)
+    {
+        return $this->redirect($this->generateUrl('video_uploaded'));
+    }
+
     /**
      * Authenticates client and redirects if gets right parametes / otherwise provides authentication link
      * @return \Symfony\Component\HttpFoundation\Response

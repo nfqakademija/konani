@@ -1,34 +1,47 @@
 {% extends '::base.html.twig' %}
 
 {% block body %}
-    <h1>My Uploaded Videos</h1>
-    <a class="btn btn-default" href="{{ path('video_upload') }}" >
-        <span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span> Upload video
-    </a>
-    <br><br>
+    <div class="not_full">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h1 class="panel-title">My Uploaded Videos</h1>
+            </div>
+            <div class="panel-body">
 
-    {% if uploadedVideos is defined %}
-        <table class="table">
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Actions</th>
-            </tr>
-        {% for video in uploadedVideos %}
-            <tr>
-                <td>{{ video.name }}</td>
-                <td>{{ video.description }}</td>
-                <td>
-                    <a class="btn btn-default btn-sm" href="{{ path('video_upload_to_youtube', {'id': video.id}) }}" >
-                        <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Upload to Youtube
-                    </a>
-                    <a class="btn btn-danger btn-sm" href="{{ path('video_delete_uploaded', {'id': video.id}) }}" >
-                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete video
-                    </a>
-                </td>
-            </tr>
 
-        {% endfor %}
-        </table>
-    {% endif %}
+
+                <a class="btn btn-success" href="{{ path('video_upload') }}" >
+                    <span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span> Upload video
+                </a>
+                <br><br>
+
+                {% if uploadedVideos|length > 0 %}
+                    <table class="table">
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    {% for video in uploadedVideos %}
+                        <tr>
+                            <td>{{ video.name }}</td>
+                            <td>{{ video.description }}</td>
+                            <td>
+                                <a class="btn btn-default btn-sm" href="{{ path('video_upload_to_youtube', {'id': video.id}) }}" >
+                                    <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Upload to Youtube
+                                </a>
+                                <a class="btn btn-danger btn-sm" href="{{ path('video_delete_uploaded', {'id': video.id}) }}" >
+                                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete video
+                                </a>
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+                    </table>
+                {% else %}
+                    No uploaded videos...
+                {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
