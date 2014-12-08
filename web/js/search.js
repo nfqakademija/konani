@@ -1,4 +1,4 @@
-$(document).ready(function() {
+/*$(document).ready(function() {
 
     var field = $('.location-search');
 
@@ -37,3 +37,4 @@ $(document).ready(function() {
         return link;
     }
 });
+*/
