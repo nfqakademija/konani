@@ -1,0 +1,35 @@
+.form-control {
+  width:35rem !important;
+  margin:0 auto !important;
+}
+
+.form-group {
+  text-align:center;
+}
+
+#form, .fos_user_change_password_form, .fos_user_registration_register {
+  padding-left:10px !important;
+  padding-right:10px !important;
+  margin-bottom: 10px;
+}
+
+.btn-default {
+  margin: 0 auto;
+  display: block;
+}
+
+label[for=remember_me] {
+  padding-left:0px;
+}
+
+.checkbox {
+  margin-left:-235px;
+}
+
+.login-button-div {
+  margin-left:-310px !important;
+}
+
+.forgot-password-div {
+  margin-left:-250px !important;
+}

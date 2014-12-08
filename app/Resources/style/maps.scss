@@ -9,19 +9,10 @@
   li img {
     width:100%;
   }
+  .h5 {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
 }
-#ajax_loading{
-  display:none;
-  position:absolute;
-  width:220px;
-  height:19px;
-  z-index:12;
-  background-color:#FFF;
-  top:50%;
-  left:50%;
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
-  margin-top: -10px; /* Half the height */
-  margin-left: -110px; /* Half the width */
-}
+

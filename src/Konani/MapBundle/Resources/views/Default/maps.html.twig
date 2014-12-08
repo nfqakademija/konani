@@ -1,9 +1,9 @@
 {% block map %}
         <div clas="row">
-            <div class="col-md-6 col-lg-6 col-sm-1 videos-row">
+            <div class="col-md-6 col-lg-6 col-sm-6 videos-row">
 
             </div>
-            <div class="col-md-6 col-lg-6 col-sm-1">
+            <div class="col-md-6 col-lg-6 col-sm-6">
                 <div id="map-canvas"></div>
             </div>
         </div>
@@ -87,13 +87,16 @@
             var data;
             $.post('{{ path('konani_video_json') }}',{'videos':markers},function(visual) {
                 data = visual;
-                
-            });
-            $(document).ajaxComplete(function(event,request, settings) {
                 $('.video-not-found').remove();
                 $('.videos-row ul').remove();
                 $('.videos-row').append(data);
+
             });
+            /*$(document).ajaxComplete(function(event,request, settings) {
+                $('.video-not-found').remove();
+                $('.videos-row ul').remove();
+                $('.videos-row').append(data);
+            });*/
         }
         });
     </script>

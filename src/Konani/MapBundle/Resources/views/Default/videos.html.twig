@@ -1,11 +1,11 @@
 {% if videos is empty %}
     <h4 class="video-not-found">No videos found at this location...</h4>
 {% endif %}
-<ul class="videos medium-block-grid-3 large-block-grid-3 small-block-grid-1">
+<ul class="videos medium-block-grid-2 large-block-grid-3 small-block-grid-1">
                     {% for video in videos %}
                         <li>
-                            <div class="h4"><a href="{{ path('video_page',{'id': video.id }) }}">{{ video.title }}</a></div>
-                            <img src="{{ video.thumbnail }}">
+                            <div class="h5"><a href="{{ path('video_page',{'id': video.id }) }}">{{ video.title }}</a></div>
+                            <a href="{{ path('video_page',{'id': video.id }) }}"><img class="img-thumbnail" src="{{ video.thumbnail }}"></a>
                         </li>
                     {% endfor %}
                 </ul>
