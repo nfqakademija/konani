@@ -25,15 +25,16 @@ class DefaultController extends Controller
 
     public function getVideosAction() {
 
+        $result = array();
+
         $request = Request::createFromGlobals();
         $ids = $request->request->get('videos');
-
-        $result = array();
-        foreach ($ids as $video) {
-            $result[] = $this->getVideo($video);
+        if (!empty($ids)) {
+            foreach ($ids as $video) {
+                $result[] = $this->getVideo($video);
+            }
         }
-
-        return $this->render('KonaniMapBundle:Default:videos.html.twig',array('videos'=>$result));
+            return $this->render('KonaniMapBundle:Default:videos.html.twig',array('videos'=>$result));
     }
 
     public function getVideo($id) {

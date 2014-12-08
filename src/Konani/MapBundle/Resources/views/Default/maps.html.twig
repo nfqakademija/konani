@@ -10,6 +10,8 @@
 
     <script>
         $(document).ready(function() {
+
+            var first = true;
             var map = new GMaps({
                 div: '#map-canvas',
                 lat: 0,
@@ -24,7 +26,6 @@
                         }
                     });
                     generateVideos(mark);
-
                 },
                 zoom_changed: function(e) {
                     mark = [];
@@ -42,13 +43,17 @@
                         address: "{{ location }}",
                         callback: function(results, status) {
                             if (status == 'OK') {
-                                var latlng = results[0].geometry.location;
-                                map.setCenter(latlng.lat(), latlng.lng());
+                                if (first) {
+                                    var latlng = results[0].geometry.location;
+                                    map.setCenter(latlng.lat(), latlng.lng());
+                                    first = false;
+                                }
                             } else {
                                 //could not find the location
                             }
                         }
                     });
+
                     mark = [];
                     $.each(markers,function(key,val) {
                         contains = map.getBounds().contains(val.getPosition());
@@ -82,8 +87,10 @@
             var data;
             $.post('{{ path('konani_video_json') }}',{'videos':markers},function(visual) {
                 data = visual;
+                
             });
             $(document).ajaxComplete(function(event,request, settings) {
+                $('.video-not-found').remove();
                 $('.videos-row ul').remove();
                 $('.videos-row').append(data);
             });
