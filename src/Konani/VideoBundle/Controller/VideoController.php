@@ -16,7 +16,7 @@ use Konani\VideoBundle\Entity\File;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Controls videos actions - add new, edit, delete, upload, upload to youtube...
+ * Controls videos actions - add new, edit, delete, upload to server, upload to youtube...
  *
  * Class VideoController
  * @package Konani\VideoBundle\Controller
@@ -81,9 +81,8 @@ class VideoController extends Controller
      */
     public function uploadedAction()
     {
-        $uploadedVideos = $this->getForUserByRepo('File');
         return $this->render('KonaniVideoBundle:Default:uploaded.html.twig', array(
-                'uploadedVideos' => $uploadedVideos
+                'uploadedVideos' => $this->getUser()->getFiles()
             ));
     }
 
@@ -94,23 +93,9 @@ class VideoController extends Controller
      */
     public function taggedAction()
     {
-        $taggedVideos = $this->getForUserByRepo('Video');
         return $this->render('KonaniVideoBundle:Default:tagged.html.twig', array(
-                'taggedVideos' => $taggedVideos
+                'taggedVideos' => $this->getUser()->getVideos()
             ));
-    }
-
-    /**
-     * Returns all entities from given repository by user
-     *
-     * @param $repository
-     * @return array
-     */
-    private function getForUserByRepo($repository)
-    {
-        return $this->getDoctrine()
-            ->getRepository('KonaniVideoBundle:'.$repository)
-            ->findBy(array("user" => $this->getUser()));
     }
 
     /**
@@ -151,48 +136,19 @@ class VideoController extends Controller
         }
         $my_client->resetToken();
         if (!$client->getAccessToken() || $client->isAccessTokenExpired()) {
-            return $this->render(
-                'KonaniVideoBundle:Default:authenticateGoogle.html.twig',
-                array(
-                    'authUrl' => $my_client->getAuthUrl(),
-                )
-            );
+            return $this->render('KonaniVideoBundle:Default:authenticateGoogle.html.twig',['authUrl' => $my_client->getAuthUrl()]);
         }
         $youtube = new Google_Service_YouTube($client);
         try {
-            if ($my_client->getChannelLinked($youtube)) {
-                return $this->render(
-                    'KonaniVideoBundle:Default:authenticateGoogle.html.twig',
-                    array(
-                        'channelLinked' => true,
-                    )
-                );
-            }
+            $channelLinked = $my_client->getChannelLinked($youtube);
         } catch (Google_Service_Exception $e) {
             throw $this->createAccessDeniedException("A service error occurred: ".htmlspecialchars($e->getMessage()));
         } catch (Google_Exception $e) {
             throw $this->createAccessDeniedException("An client error occurred: ".htmlspecialchars($e->getMessage()));
         }
         $this->get('session')->set('token', $client->getAccessToken());
-        return $this->render('KonaniVideoBundle:Default:authenticateGoogle.html.twig', array());
+        return $this->render('KonaniVideoBundle:Default:authenticateGoogle.html.twig',['channelLinked' => $channelLinked]);
     }
-    /*public function createYoutubeChannelAction()
-    {
-        $my_client = $this->get('google_client');
-        $client = $my_client->getGoogleClient();
-        //$youtube = new Google_Service_YouTube($client);
-        $my_client->resetToken();
-        $return = array();
-        if ($client->getAccessToken() && !$client->isAccessTokenExpired()) {
-            //$return = updateChannelPrivacyAction($client);
-            $this->get('session')->set('token', $client->getAccessToken());
-            return $this->render('KonaniVideoBundle:Default:createYoutubeChannel.html.twig', array(
-                    'params' => $return,
-                ));
-        } else {
-            return $this->redirect($this->generateUrl('video_authenticate_google'));
-        }
-    }*/
 
     /**
      * Uploads video to clients youtube channel
@@ -204,25 +160,18 @@ class VideoController extends Controller
         $my_client = $this->get('google_client');
         $client = $my_client->getGoogleClient();
         $my_client->resetToken();
-        $file = $this->getDoctrine()
-            ->getRepository('KonaniVideoBundle:File')
-            ->find($id);
+        $file = $this->getDoctrine()->getRepository('KonaniVideoBundle:File')->find($id);
         if (!$file) {
-            throw $this->createNotFoundException(
-                'No video found for id ' . $id
-            );
-        }
-        if (!$client->getAccessToken() || $client->isAccessTokenExpired()) {
-            return $this->redirect($this->generateUrl('video_authenticate_google'));
+            throw $this->createNotFoundException('No video found for id ' . $id);
         }
         $youtube = new Google_Service_YouTube($client);
         try {
-            if ($my_client->getChannelLinked($youtube)) {
+            if (!$client->getAccessToken() || $client->isAccessTokenExpired() || !$my_client->getChannelLinked($youtube)) {
+                return $this->redirect($this->generateUrl('video_authenticate_google'));
+            } else {
                 $my_client->uploadVideo($file, $youtube);
                 $this->get('session')->set('token', $client->getAccessToken());
-                return $this->redirect($this->generateUrl('video_delete_uploaded', array('id' => $id)));
-            } else {
-                return $this->redirect($this->generateUrl('video_authenticate_google'));
+                return $this->redirect($this->generateUrl('video_delete_uploaded', ['id' => $id]));
             }
         } catch (Google_Service_Exception $e) {
             throw $this->createAccessDeniedException("A service error occurred: ".htmlspecialchars($e->getMessage()));
@@ -233,6 +182,8 @@ class VideoController extends Controller
 
     public function newTagAction(Request $request)
     {
+        //$ip = $this->get('request')->getClientIp();
+        $ip = "86.38.9.252";
         $my_client = $this->get('google_client');
         $client = $my_client->getGoogleClient();
         $my_client->resetToken();
@@ -272,6 +223,7 @@ class VideoController extends Controller
         $this->get('session')->set('token', $client->getAccessToken());
         return $this->render('KonaniVideoBundle:Default:newTag.html.twig', array(
                 'form' => $form->createView(),
+                'location' => $this->get('location')->getMyLocation($ip),
             ));
     }
 }

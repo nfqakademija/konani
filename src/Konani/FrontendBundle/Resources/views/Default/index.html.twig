@@ -2,11 +2,15 @@
 
 {% block body %}
     <div class="container video-grid">
-        {% if videos|length > 0 %}
+        {% if city %}
             <h1>Videos near your location {{ city }}, {{ region }}</h1>
             <ul class="medium-block-grid-2 small-block-grid-1 large-block-grid-3">
-                {% for video in videos %}
-                    <li><iframe width="300" height="230" src="//www.youtube.com/embed/{{ video.youtubeId }}" frameborder="0" allowfullscreen></iframe></li>
+                {% for id, video in videos %}
+                    <li><h2><a href='{{ path('video_page', {'id':id} ) }}'>{{ video.youtube.snippet.title }}</a></h2>
+                        {#<iframe width="300" height="230" src="//www.youtube.com/embed/{{ video.youtubeId }}" frameborder="0" allowfullscreen></iframe>#}
+                        <a href='{{ path('video_page', {'id':id} ) }}'><img class="img-thumbnail" height="{{ video.youtube.snippet.thumbnails.medium.height }}" width="{{ video.youtube.snippet.thumbnails.medium.width }}" alt="{{ video.youtube.snippet.title }}" title="{{ video.youtube.snippet.title }}" src="{{ video.youtube.snippet.thumbnails.medium.url }}"/></a>
+                        {% if video.location %}<p>Near <i>{{ video.location.name }} ({{ video.location.address }})</i></p>{% endif %}
+                    </li>
                 {% endfor %}
             </ul>
         {% else %}

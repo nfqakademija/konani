@@ -3,8 +3,6 @@
 namespace Konani\VideoBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query\ResultSetMapping;
-use Doctrine\DBAL\Types\Type;
 
 /**
  * VideoRepository
@@ -30,7 +28,7 @@ class VideoRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findClosestVideos($lat,$lng,$limit = 9)
+    public function findClosestVideos($lat, $lng, $limit = 9)
     {
         $config = $this->getEntityManager()->getConfiguration();
         $config->addCustomNumericFunction('acos', 'DoctrineExtensions\Query\Mysql\Acos');
@@ -41,7 +39,7 @@ class VideoRepository extends EntityRepository
         $qb = $this->createQueryBuilder('v');
         $qb->select('v')
             ->addSelect('( 6371 * acos( cos( radians(:lat) ) * cos( radians( v.latitude ) ) * cos( radians( v.longitude ) - radians(:lng) ) + sin( radians(:lat) ) * sin( radians( v.latitude ) ) ) ) AS HIDDEN distance')
-            ->orderBy('distance', 'DESC')
+            ->orderBy('distance', 'ASC')
             ->setParameter('lat', $lat)
             ->setParameter('lng', $lng)
             ->setMaxResults($limit)

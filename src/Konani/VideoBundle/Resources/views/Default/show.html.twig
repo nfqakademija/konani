@@ -6,12 +6,11 @@
             {% for item in items %}
                 <div class="col-lg-12"><h1>{{ item.snippet.title }}</h1></div>
                 <div class="col-lg-6">
-
-                        <iframe type='text/html' src='http://www.youtube.com/embed/{{ item.id }}' width='100%' height="400px" frameborder='0' allowfullscreen='true'></iframe>
-                        <p>{{ item.snippet.description }}</p>
-
+                    <iframe id="ytplayer" type='text/html' src='http://www.youtube.com/embed/{{ item.id }}?rel=0&showinfo=0&autohide=1&iv_load_policy=3&theme=light' width='100%' height="400px" frameborder='0' allowfullscreen></iframe>
+                    <p>{{ item.snippet.description }}</p>
                 </div>
                 <div class="col-lg-6">
+                    <div id="ajax_loading"><img src="{{ asset('img/ajax-loader.gif') }}" width="220" height="19"></div>
                     <div id="map-canvas"></div>
                 </div>
             {% endfor %}
@@ -41,19 +40,117 @@
             map = new google.maps.Map(document.getElementById('map-canvas'),
                     mapOptions);
 
-            var markernew = createMarker(new google.maps.LatLng({{ coordinates.latitude }}, {{ coordinates.longitude}}),'');
-            markers.push(markernew);
-        }
+            google.maps.event.addListener(map, 'idle', function(){
+                getVideos(map,this.getBounds(),map.getZoom());
+            });
 
-        // Creates map marker
-        function createMarker(point,html)
-        {
-            var marker=new google.maps.Marker({map:map,position:point,draggable:true});
-            markers.push(marker);
-            return marker;
         }
 
         google.maps.event.addDomListener(window, 'load', initialize);
+
+        // Creates map marker
+        function createMarker(point,icon)
+        {
+            var videoMarker = new google.maps.Marker({
+                position: point,
+                //map: map,
+                icon: icon,
+                draggable: false
+            });
+            return videoMarker;
+        }
+
+        function getVideos(map,bounds,zoom){
+
+            var southWest=bounds.getSouthWest();
+            var northEast=bounds.getNorthEast();
+            var lngSpan=northEast.lng()-southWest.lng();
+            var latSpan=northEast.lat()-southWest.lat();
+
+            var lt1=southWest.lat();
+            var lt2=southWest.lat()+latSpan;
+            var lng1=southWest.lng();
+            var lng2=southWest.lng()+lngSpan;
+
+            $.ajax({
+                type: "GET",
+                url: Routing.generate('api_video_list_by_coords', { min_lat: lt1, max_lat: lt2, min_lng: lng1, max_lng: lng2, zoom: zoom })
+            })
+            .success(function( data ) {
+                $.each(data, function(key, obj) {
+                    if (obj.lat == "{{ coordinates.latitude }}" && obj.lng == "{{ coordinates.longitude }}") {
+                        var icon = "{{ asset('img/video_icon_current.png') }}";
+                    } else {
+                        var icon = "{{ asset('img/video_icon.png') }}";
+                    }
+                    var myLatLng = new google.maps.LatLng(obj.lat, obj.lng);
+                    var beachMarker = createMarker(myLatLng,icon);
+
+                    if (!markerExists(beachMarker)) {
+                        beachMarker.setMap(map);
+                        $.ajax({
+                            type: "POST",
+                            url: Routing.generate('api_video_one_by_id', { id: obj.id })
+                        })
+                        .success(function( data ) {
+                            var infowindow = new google.maps.InfoWindow({
+                                content: '<div style="min-height: 140px; float: left; min-width: 130px;"><a href="'+Routing.generate('video_page', { id: data.id })+'">'+data.title+'</a><br><br><a href="'+Routing.generate('video_page', { id: data.id })+'"><img class="img-thumbnail" height="'+data.thumbnail.height+'" width="'+data.thumbnail.width+'" src="'+data.thumbnail.url+'"/></a>'
+                            });
+                            google.maps.event.addListener(beachMarker, 'click', function() {
+                                infowindow.open(map,beachMarker);
+                            });
+                        });
+                        markers.push(beachMarker);
+                    }
+                });
+                removeInvisibleMarkers();
+            });
+         }
+
+        function removeInvisibleMarkers()
+        {
+            $.each(markers, function (key, marker) {
+                if (typeof marker !== 'undefined') {
+                    // if already not in bounds
+                    if (!map.getBounds().contains(marker.getPosition())) {
+                        // delete marker
+                        markers[key].setMap(null);
+                        delete markers[key];
+                    }
+                }
+            });
+        }
+
+        function markerExists(newMarker)
+        {
+            var exist = false;
+            $.each(markers, function(key,marker){
+                if (typeof marker !== 'undefined') {
+                    if ((marker.getPosition().lat() == newMarker.getPosition().lat()) && (marker.getPosition().lng() == newMarker.getPosition().lng())) {
+                        exist = true;
+                    }
+                }
+            });
+            return exist;
+        }
+
+        // Sets the map on all markers in the array.
+        function setAllMap(map) {
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setMap(map);
+            }
+        }
+
+        // Removes the overlays from the map, but keeps them in the array.
+        function clearOverlays() {
+            setAllMap(null);
+        }
+
+        // Deletes all markers in the array by removing references to them.
+        function deleteOverlays() {
+            clearOverlays();
+            markers = [];
+        }
 
     </script>
 {% endblock %}

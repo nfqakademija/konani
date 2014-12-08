@@ -3,14 +3,14 @@
 {% block body %}
     <h1>My Tagged Videos</h1>
     <a class="btn btn-default" href="{{ path('video_new_tag') }}" >
-        <span class="glyphicon glyphicon-hd-video" aria-hidden="true"></span> Tag video
+        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Tag video
     </a>
     <br><br>
 
     {% if taggedVideos is defined %}
         <table class="table">
             <tr>
-                <th>ID</th>
+                <th>Video</th>
                 <th>Latitude</th>
                 <th>Longitude</th>
                 <th>Created At</th>
@@ -18,7 +18,7 @@
             </tr>
         {% for video in taggedVideos %}
             <tr>
-                <td>{{ video.youtubeId }}</td>
+                <td><img class="img-thumbnail" src="http://img.youtube.com/vi/{{ video.youtubeId }}/1.jpg"/></td>
                 <td>{{ video.latitude }}</td>
                 <td>{{ video.longitude }}</td>
                 <td>{{ video.createdAt|date("Y-m-d h:i") }}</td>

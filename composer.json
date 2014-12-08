@@ -23,7 +23,8 @@
         "google/apiclient": "1.0.6-beta",
 
         "doctrine/doctrine-fixtures-bundle": "2.2.*",
-        "beberlei/DoctrineExtensions": "dev-master"
+        "beberlei/DoctrineExtensions": "dev-master",
+        "friendsofsymfony/jsrouting-bundle": "2.0.*@dev"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
