@@ -19,6 +19,7 @@
 
         var map;
         var markers = [];
+        var geocoder = new google.maps.Geocoder();
 
         // Initializes google map
         function initialize() {
@@ -88,6 +89,38 @@
 
         google.maps.event.addDomListener(window, 'load', initialize);
 
+
+        /*       $('#search_form').submit(function(){
+            $('#search_btn').click(function(){
+            alert('aaa');
+            //console.log('asdasd');
+
+            $('#location-search').removeClass('red');
+            geocoder.geocode({ 'address': search }, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+
+                    var lat = results[0].geometry.location.lat().toString().substr(0, 12);
+                    var lng = results[0].geometry.location.lng().toString().substr(0, 12);
+
+                    var myLatLng = new google.maps.LatLng(lat, lng);
+
+                    $('#location-search').val(results[0].formatted_address);
+
+                    var markernew = createMarker(myLatLng,'<div id="markertext">'+popout+'</div>');
+
+
+                    map.setCenter(myLatLng);
+                    map.setZoom(14);
+                    openMarker(markernew,'<div id="markertext">'+popout+'</div>');
+
+
+                } else {
+                    $('#location-search').addClass('red');
+                }
+            });
+
+        });
+        */
     </script>
     <script src="{{ asset('js/map.js') }}"></script>
 {% endblock %}
