@@ -9,6 +9,10 @@
     {{ form(form) }}
 {% endblock %}
 
+{% block header_block %}
+    {% include '::header_small.html.twig' %}
+{% endblock %}
+
 {% block javascripts %}
     {{ parent() }}
     <script type="text/javascript">

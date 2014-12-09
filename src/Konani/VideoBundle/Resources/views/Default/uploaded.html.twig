@@ -1,5 +1,9 @@
 {% extends '::base.html.twig' %}
 
+{% block header_block %}
+    {% include '::header_small.html.twig' %}
+{% endblock %}
+
 {% block body %}
     <div class="not_full">
         <div class="panel panel-default">
@@ -27,7 +31,7 @@
                             <td>{{ video.name }}</td>
                             <td>{{ video.description }}</td>
                             <td>
-                                <a class="btn btn-default btn-sm" href="{{ path('video_upload_to_youtube', {'id': video.id}) }}" >
+                                <a class="btn btn-success btn-sm" href="{{ path('video_upload_to_youtube', {'id': video.id}) }}" >
                                     <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Upload to Youtube
                                 </a>
                                 <a class="btn btn-danger btn-sm" href="{{ path('video_delete_uploaded', {'id': video.id}) }}" >

@@ -103,7 +103,7 @@ class GoogleClient
         $snippet = new Google_Service_YouTube_VideoSnippet();
         $snippet->setTitle($file->GetName());
         $snippet->setDescription($file->GetDescription());
-        $snippet->setTags(array("Snowboarder", "Symfony", "Google", "Youtube"));
+        $snippet->setTags(array("Geolocation", "Fun", "Google", "Youtube"));
         $snippet->setCategoryId("22");
 
         return $snippet;

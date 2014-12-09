@@ -61,7 +61,7 @@ class VideoController extends Controller
                 ->findOneBy(array(
                         'id' => $id
                     ));
-            $videoResponse = $youtube->videos->listVideos('snippet', array(
+            $videoResponse = $youtube->videos->listVideos('snippet,statistics', array(
                     'id' => $video->getYoutubeId(),
                 ));
         } catch (NoResultException $e) {
@@ -112,7 +112,7 @@ class VideoController extends Controller
                 ->getOneByIdAndUserId($id, $this->getUser()->getId());
         } catch (NoResultException $e) {
             throw $this->createNotFoundException(
-                'No video found for id '.$id
+                'No uploaded video found for id '.$id
             );
         }
         $em->remove($file);
@@ -122,7 +122,19 @@ class VideoController extends Controller
 
     public function deleteTaggedAction($id)
     {
-        return $this->redirect($this->generateUrl('video_uploaded'));
+        $em = $this->getDoctrine()->getManager();
+        try {
+            $video = $this->getDoctrine()
+                ->getRepository('KonaniVideoBundle:Video')
+                ->find(['id'=>$id, 'userId'=>$this->getUser()->getId()]);
+        } catch (NoResultException $e) {
+            throw $this->createNotFoundException(
+                'No tagged video found for id '.$id
+            );
+        }
+        $em->remove($video);
+        $em->flush();
+        return $this->redirect($this->generateUrl('video_tagged'));
     }
 
     /**

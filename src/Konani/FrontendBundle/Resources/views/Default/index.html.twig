@@ -4,6 +4,7 @@
     <div class="container video-grid">
         {% if city %}
             <h1>Videos near your location {{ city }}, {{ region }}</h1>
+            {% if videos|length > 0 %}
             <ul class="medium-block-grid-2 small-block-grid-1 large-block-grid-3">
                 {% for id, video in videos %}
                     <li><h2><a href='{{ path('video_page', {'id':id} ) }}'>{{ video.youtube.snippet.title }}</a></h2>
@@ -13,6 +14,9 @@
                     </li>
                 {% endfor %}
             </ul>
+            {% else %}
+                <p>No videos found...</p>
+            {% endif %}
         {% else %}
             <div class="alert alert-danger" role="alert">
                 <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>

@@ -105,3 +105,19 @@
     margin-top:-0.5%;
   }
 }
+
+.small_navbar {
+  height:auto!important;
+  padding-top:0px!important;
+  padding-bottom:0px!important;
+}
+.small_navbar .search-bar {
+  background: none!important;
+  height: 50px!important;
+  line-height: normal!important;
+  position:static;
+  margin-top:0px!important;
+}
+.small_navbar .search-bar input {
+  margin-top:0px;
+}

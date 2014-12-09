@@ -43,7 +43,9 @@
 <![endif]-->
 
 <div class="container-fluid main-container">
+    {% block header_block %}
     {% include 'header.html.twig' %}
+    {% endblock %}
     {% for type, messages in app.session.flashbag.all() %}
         {% for message in messages %}
             <div class="flash-{{ type }}">
