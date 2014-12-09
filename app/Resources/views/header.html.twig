@@ -1,5 +1,4 @@
 <nav class="navbar navbar-default" role="navigation">
-    <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                 <span class="sr-only">Toggle navigation</span>
@@ -39,6 +38,8 @@
                 {% endif %}
             </ul>
         </div>
+
+
         <div class="search-bar">
             <form action="{{ path('konani_map_search') }}" method='POST'>
                 <input type="text" class="location-search" name="location" placeholder="Location name" />
@@ -46,5 +47,4 @@
                 <input type="hidden" class="latitude" name="latitude">
             </form>
         </div>
-    </div>
 </nav>
