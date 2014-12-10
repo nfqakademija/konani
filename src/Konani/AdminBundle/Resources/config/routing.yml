@@ -1,3 +1,0 @@
-konani_admin_homepage:
-    path:     /hello_ad/{name}
-    defaults: { _controller: KonaniAdminBundle:Default:index }
