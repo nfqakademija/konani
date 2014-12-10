@@ -5,7 +5,7 @@ namespace Konani\VideoBundle\DataFixtures\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Konani\UserBundle\Entity\Video;
+use Konani\VideoBundle\Entity\Video;
 
 /**
  * Class for generating demo users
