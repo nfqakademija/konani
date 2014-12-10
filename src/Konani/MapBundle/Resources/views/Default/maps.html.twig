@@ -5,6 +5,7 @@
             </div>
             <div class="col-md-6 col-lg-6 col-sm-6">
                 <div id="map-canvas"></div>
+
             </div>
         </div>
 
@@ -71,14 +72,26 @@
                     map.addMarker({
                         lat:  {{ video.latitude }},
                         lng: {{ video.longitude }},
-                        title: 'aaaaa',
+                        title: 'name',
                         id: '{{ video.id }}',
+                        icon:"{{ asset('img/video_icon.png') }}",
                         click: function(e) {
-                            console.log('You clicked in this marker');
+                            $.ajax({
+                                type: "POST",
+                                url: Routing.generate('api_video_one_by_id', { id: {{ video.id }} })
+                            })
+                                    .success(function( data ) {
+                                        $("div.info-"+data.id+" img").attr('src',data.thumbnail.url);
+                                        $("div.info-"+data.id).show();
+                                    });
                         },
                         infoWindow: {
-                             content: '<p>HTML Content</p>'
+                             content:
+                             '<div class=" info-{{ video.id }}">' +
+                                '<a href="{{ path('video_page',{'id': video.id }) }}"><img src=""></a>' +
+                             '</div>'
                         }
+
                     })
                 );
             {% endfor %}
@@ -90,13 +103,12 @@
                 $('.video-not-found').remove();
                 $('.videos-row ul').remove();
                 $('.videos-row').append(data);
-
             });
-            /*$(document).ajaxComplete(function(event,request, settings) {
+            $(document).ajaxComplete(function(event,request, settings) {
                 $('.video-not-found').remove();
                 $('.videos-row ul').remove();
                 $('.videos-row').append(data);
-            });*/
+            });
         }
         });
     </script>
