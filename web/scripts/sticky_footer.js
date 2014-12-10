@@ -10,7 +10,7 @@ jQ(document).ready(function() {
     var footerTop = jQ('.footer').position().top + footerHeight;
 
     if (footerTop < docHeight) {
-        jQ('.footer').css('margin-top', 30 + (docHeight - footerTop) + 'px');
+        jQ('.footer').css('margin-top', 00 + (docHeight - footerTop) + 'px');
     }
     if ((jQ('.footer').outerHeight(true)-jQ('#footer').outerHeight())<30) {
         jQ('.footer').css('margin-top',30);
