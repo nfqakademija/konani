@@ -37,12 +37,6 @@ class User extends BaseUser
      */
     private $surename;
 
-
-    /**
-     * @ORM\OneToMany(targetEntity="\Konani\CartBundle\Entity\Cart", mappedBy="user")
-     */
-    protected $carts;
-
     /**
      * @ORM\OneToMany(targetEntity="\Konani\VideoBundle\Entity\Video", mappedBy="user")
      */
@@ -116,39 +110,6 @@ class User extends BaseUser
     public function getSurename()
     {
         return $this->surename;
-    }
-
-    /**
-     * Add carts
-     *
-     * @param \Konani\CartBundle\Entity\Cart $carts
-     * @return User
-     */
-    public function addCart(\Konani\CartBundle\Entity\Cart $carts)
-    {
-        $this->carts[] = $carts;
-
-        return $this;
-    }
-
-    /**
-     * Remove carts
-     *
-     * @param \Konani\CartBundle\Entity\Cart $carts
-     */
-    public function removeCart(\Konani\CartBundle\Entity\Cart $carts)
-    {
-        $this->carts->removeElement($carts);
-    }
-
-    /**
-     * Get carts
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getCarts()
-    {
-        return $this->carts;
     }
 
     /**

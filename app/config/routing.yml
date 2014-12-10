@@ -6,16 +6,8 @@ frontend:
     resource: "@FrontendBundle/Resources/config/routing.yml"
     prefix:   /
 
-konani_cart:
-    resource: "@KonaniCartBundle/Resources/config/routing.yml"
-    prefix:   /
-
 konani_video:
     resource: "@KonaniVideoBundle/Resources/config/routing.yml"
-    prefix:   /video/
-
-konani_admin:
-    resource: "@KonaniAdminBundle/Resources/config/routing.yml"
     prefix:   /
 
 konani_user:

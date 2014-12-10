@@ -16,9 +16,7 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new Konani\UserBundle\KonaniUserBundle(),
-            new Konani\AdminBundle\KonaniAdminBundle(),
             new Konani\VideoBundle\KonaniVideoBundle(),
-            new Konani\CartBundle\KonaniCartBundle(),
             new Konani\MapBundle\KonaniMapBundle(),
             new Konani\FrontendBundle\FrontendBundle(),
             new FOS\UserBundle\FOSUserBundle(),
@@ -27,7 +25,6 @@ class AppKernel extends Kernel
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
-            /*$bundles[] = new Acme\DemoBundle\AcmeDemoBundle();*/
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
             $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
             $bundles[] = new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();

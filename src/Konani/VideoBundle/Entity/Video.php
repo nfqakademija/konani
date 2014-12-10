@@ -71,16 +71,6 @@ class Video
      */
     protected $user;
 
-    /**
-     * @ORM\OneToMany(targetEntity="\Konani\CartBundle\Entity\CartVideo", mappedBy="video")
-     */
-    protected $subscriptions;
-
-    public function __construct()
-    {
-        $this->subscriptions = new ArrayCollection();
-    }
-
 
     /**
      * Get id
@@ -251,38 +241,5 @@ class Video
     public function getUser()
     {
         return $this->user;
-    }
-
-    /**
-     * Add subscriptions
-     *
-     * @param \Konani\CartBundle\Entity\CartVideo $subscriptions
-     * @return Video
-     */
-    public function addSubscription(\Konani\CartBundle\Entity\CartVideo $subscriptions)
-    {
-        $this->subscriptions[] = $subscriptions;
-
-        return $this;
-    }
-
-    /**
-     * Remove subscriptions
-     *
-     * @param \Konani\CartBundle\Entity\CartVideo $subscriptions
-     */
-    public function removeSubscription(\Konani\CartBundle\Entity\CartVideo $subscriptions)
-    {
-        $this->subscriptions->removeElement($subscriptions);
-    }
-
-    /**
-     * Get subscriptions
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getSubscriptions()
-    {
-        return $this->subscriptions;
     }
 }

@@ -39,7 +39,7 @@
             </ul>
         </div>
         <div class="search-bar">
-            {% if app.request.attributes.get('_route') == 'video_new_tag' %}
+            {% if (app.request.attributes.get('_route') == 'video_new_tag') or (app.request.attributes.get('_route') == 'video_page') %}
                 <form id="search_form">
                     <input type="text" id="search_query" class="location-search" name="location" placeholder="Location name" />
                 </form>

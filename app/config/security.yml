@@ -25,11 +25,11 @@ security:
     #        anonymous:    true
         main:
             pattern: ^/
+            anonymous: ~
             form_login:
                 provider: fos_userbundle
                 csrf_provider: form.csrf_provider
-            logout:       true
-            anonymous:    true
 
     access_control:
+        - { path: ^/profile$, role: ROLE_USER }
         - { path: ^/admin/, role: ROLE_ADMIN }
