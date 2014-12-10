@@ -18,7 +18,7 @@
                 lat: 0,
                 lng: 0,
                 zoom:10,
-                dragend: function(e) {
+                /*dragend: function(e) {
                     mark = [];
                     $.each(markers,function(key,val) {
                         contains = map.getBounds().contains(val.getPosition());
@@ -27,8 +27,8 @@
                         }
                     });
                     generateVideos(mark);
-                },
-                zoom_changed: function(e) {
+                },*/
+                idle: function(e) {
                     mark = [];
                     $.each(markers,function(key,val) {
                         contains = map.getBounds().contains(val.getPosition());
