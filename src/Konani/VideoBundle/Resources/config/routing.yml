@@ -52,3 +52,9 @@ api_video_one_by_id:
     defaults: { _controller: KonaniVideoBundle:VideoAPI:videoById }
     options:
         expose: true
+
+api_nearby_place_by_coords:
+    path:   /api/nearby_place/{lat}/{lng}
+    defaults: { _controller: KonaniVideoBundle:VideoAPI:nearbyPlace }
+    options:
+        expose: true

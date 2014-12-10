@@ -7,9 +7,10 @@
             {% if videos|length > 0 %}
             <ul class="medium-block-grid-2 small-block-grid-1 large-block-grid-3">
                 {% for id, video in videos %}
-                    <li><h2><a href='{{ path('video_page', {'id':id} ) }}'>{{ video.youtube.snippet.title }}</a></h2>
+                    <li class="video_thumb"><h2><a href='{{ path('video_page', {'id':id} ) }}'>{{ video.youtube.snippet.title }}</a></h2>
                         <a href='{{ path('video_page', {'id':id} ) }}'><img class="img-thumbnail" height="{{ video.youtube.snippet.thumbnails.medium.height }}" width="{{ video.youtube.snippet.thumbnails.medium.width }}" alt="{{ video.youtube.snippet.title }}" title="{{ video.youtube.snippet.title }}" src="{{ video.youtube.snippet.thumbnails.medium.url }}"/></a>
-                        {% if video.location %}<p>Near <i>{{ video.location.name }} ({{ video.location.address }})</i></p>{% endif %}
+                        <p class="nearby_place"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></p>
+                        {% if video.location is defined %}<input class="lat" type="hidden" value="{{ video.location.lat }}"/><input class="lng" type="hidden" value="{{ video.location.lng }}"/>{% endif %}
                     </li>
                 {% endfor %}
             </ul>
@@ -24,4 +25,25 @@
             </div>
         {% endif %}
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("li.video_thumb").each(function () {
+                var elem = this;
+                $.ajax({
+                    type: "POST",
+                    url: Routing.generate('api_nearby_place_by_coords', {
+                        lat: $(elem).children('.lat').val(),
+                        lng: $(elem).children('.lng').val()
+                    })
+                })
+                .success(function (data) {
+                    $(elem).children('.nearby_place').empty().html('Near ' + data.name + '(' + data.address + ')');
+                });
+            });
+        });
+    </script>
 {% endblock %}

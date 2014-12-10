@@ -14,7 +14,7 @@ class DefaultController extends Controller
         $ip = "86.38.9.252";
         $mergedVideos = [];
         if ($location = $this->get('location')->getMyLocation($ip)) {
-            $repositoryVideos = $this->getDoctrine()->getRepository('KonaniVideoBundle:Video')->findClosestVideos($location->lat,$location->lng,9);
+            $repositoryVideos = $this->getDoctrine()->getRepository('KonaniVideoBundle:Video')->findClosestVideos($location->lat,$location->lng,6);
             $my_client = $this->get('google_client');
             $client = $my_client->getGoogleClient();
             $youtube = new Google_Service_YouTube($client);

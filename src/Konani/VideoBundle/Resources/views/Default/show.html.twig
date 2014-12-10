@@ -52,7 +52,7 @@
             {% endfor %}
         {% else %}
             <div class="col-lg-12">
-                <div class="alert alert-danger" role="alert">
+                <div class="alert alert-danger not_full" role="alert">
                     Video not found in youtube. It has been removed or privacy settings was changed.
                 </div>
             </div>
@@ -81,7 +81,6 @@
             google.maps.event.addListener(map, 'idle', function(){
                 getVideos(map,this.getBounds(),map.getZoom());
             });
-
         }
 
         google.maps.event.addDomListener(window, 'load', initialize);

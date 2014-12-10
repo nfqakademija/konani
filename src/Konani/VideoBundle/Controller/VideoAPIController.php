@@ -60,6 +60,14 @@ class VideoAPIController extends Controller
         return $response;
     }
 
+    public function nearbyPlaceAction($lat,$lng)
+    {
+        $nearby_place = $this->get('google_client')->getNearbyPlace($lat,$lng);
+        $response = new JsonResponse();
+        $response->setData($nearby_place);
+        return $response;
+    }
+
     private function videoArrayFromResponseAction($id,$searchResponse)
     {
         $videoArray = [

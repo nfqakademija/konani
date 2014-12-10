@@ -270,23 +270,27 @@ class GoogleClient
     public function getProvidedVideos($repositoryVideos, $youtube)
     {
         $mergedVideos = [];
+        $searchResponse = $youtube->videos->listVideos(
+            'snippet',
+            [
+                'id' => $this->getVideoIdString($repositoryVideos),
+                'maxResults' => 6,
+            ]
+        );
+        $key = 0;
         foreach ($repositoryVideos as $repositoryVideo) {
-            $searchResponse = $youtube->videos->listVideos(
-                'snippet',
-                [
-                    'id' => $repositoryVideo->getYoutubeId(),
-                ]
-            );
-
-            if ($searchResponse['pageInfo']['totalResults']) {
-                $mergedVideos[$repositoryVideo->getId()]['youtube'] = $searchResponse['items'][0];
-                $mergedVideos[$repositoryVideo->getId()]['location'] = $this->getNearbyPlace(
-                    $repositoryVideo->getLatitude(),
-                    $repositoryVideo->getLongitude()
-                );
+            if (isset($searchResponse['items'][$key])) {
+                $mergedVideos[$repositoryVideo->getId()]['youtube'] = $searchResponse['items'][$key];
+            } else {
+                $mergedVideos[$repositoryVideo->getId()]['youtube']['snippet']['title'] = 'Video not found';
+                $mergedVideos[$repositoryVideo->getId()]['youtube']['snippet']['thumbnails']['medium']['url'] = 'http://i.ytimg.com/vi/QfgoDDh4kE0/maxresdefault.jpg';
+                $mergedVideos[$repositoryVideo->getId()]['youtube']['snippet']['thumbnails']['medium']['height'] = '180';
+                $mergedVideos[$repositoryVideo->getId()]['youtube']['snippet']['thumbnails']['medium']['width'] = '320';
             }
+            $mergedVideos[$repositoryVideo->getId()]['location']['lat'] = $repositoryVideo->getLatitude();
+            $mergedVideos[$repositoryVideo->getId()]['location']['lng'] = $repositoryVideo->getLongitude();
+            $key++;
         }
-
         return $mergedVideos;
     }
 
@@ -297,7 +301,7 @@ class GoogleClient
      * @param $lng
      * @return array|null
      */
-    private function getNearbyPlace($lat, $lng)
+    public function getNearbyPlace($lat, $lng)
     {
         $json = sprintf(
             "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%s,%s&rankby=distance&minprice=0&maxprice=0&types=%s&key=%s",
@@ -312,6 +316,15 @@ class GoogleClient
             return array('name' => $places['results'][0]['name'], 'address' => $places['results'][0]['vicinity']);
         }
         return null;
+    }
+
+    private function getVideoIdString($repositoryVideos)
+    {
+        $videosIdString = "";
+        foreach ($repositoryVideos as $repositoryVideo) {
+            $videosIdString .= $repositoryVideo->getYoutubeId().",";
+        }
+        return $videosIdString;
     }
 
     /**
