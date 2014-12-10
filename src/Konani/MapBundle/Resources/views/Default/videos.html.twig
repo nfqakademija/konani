@@ -4,8 +4,8 @@
 <ul class="videos medium-block-grid-2 large-block-grid-3 small-block-grid-1">
                     {% for video in videos %}
                         <li>
-                            <div class="h5"><a href="{{ path('video_page',{'id': video.id }) }}">{{ video.title }}</a></div>
                             <a href="{{ path('video_page',{'id': video.id }) }}"><img class="img-thumbnail" src="{{ video.thumbnail }}"></a>
+                            <div class="h5"><a href="{{ path('video_page',{'id': video.id }) }}">{{ video.title }}</a></div>
                         </li>
                     {% endfor %}
                 </ul>

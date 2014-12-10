@@ -1,7 +1,7 @@
 {% block map %}
         <div clas="row">
             <div class="col-md-6 col-lg-6 col-sm-6 videos-row">
-
+                <h4 class="address"></h4>
             </div>
             <div class="col-md-6 col-lg-6 col-sm-6">
                 <div id="map-canvas"></div>
@@ -48,6 +48,7 @@
                                     var latlng = results[0].geometry.location;
                                     map.setCenter(latlng.lat(), latlng.lng());
                                     first = false;
+                                    $('.address').text(results[0]['formatted_address']);
                                 }
                             } else {
                                 //could not find the location
@@ -98,17 +99,24 @@
 
         function generateVideos(markers) {
             var data;
+            var old_data = "";
+            var load = true;
             $.post('{{ path('konani_video_json') }}',{'videos':markers},function(visual) {
-                data = visual;
-                $('.video-not-found').remove();
-                $('.videos-row ul').remove();
-                $('.videos-row').append(data);
+                if (old_data != visual) {
+                    old_data = visual;
+                    data = visual;
+                    $('.video-not-found').remove();
+                    $('.videos-row ul').remove();
+                    $('.videos-row').append(data);
+                }
             });
-            $(document).ajaxComplete(function(event,request, settings) {
-                $('.video-not-found').remove();
-                $('.videos-row ul').remove();
-                $('.videos-row').append(data);
-            });
+            /*$(document).ajaxComplete(function(event,request, settings) {
+                if (load) {
+                    $('.video-not-found').remove();
+                    $('.videos-row ul').remove();
+                    $('.videos-row').append(data);
+                }
+            });*/
         }
         });
     </script>
