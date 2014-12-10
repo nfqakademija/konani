@@ -24,7 +24,8 @@
 
         "doctrine/doctrine-fixtures-bundle": "2.2.*",
         "beberlei/DoctrineExtensions": "dev-master",
-        "friendsofsymfony/jsrouting-bundle": "2.0.*@dev"
+        "friendsofsymfony/jsrouting-bundle": "2.0.*@dev",
+        "phpunit/phpunit": "4.4.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

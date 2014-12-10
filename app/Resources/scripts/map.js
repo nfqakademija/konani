@@ -36,7 +36,6 @@ $(document).ready(function() {
     });
 
     $('#search_form').submit(function(event) {
-        console.log('CLICK');
         event.preventDefault();
         geocoder.geocode({ 'address': $('#search_query').val() }, function (results, status) {
             if (status === google.maps.GeocoderStatus.OK) {

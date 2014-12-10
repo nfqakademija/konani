@@ -51,7 +51,6 @@ class User extends BaseUser
     public function __construct()
     {
         parent::__construct();
-        $this->carts = new ArrayCollection();
         $this->videos = new ArrayCollection();
         $this->files = new ArrayCollection();
     }

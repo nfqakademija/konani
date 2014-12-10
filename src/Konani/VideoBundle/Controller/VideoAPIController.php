@@ -19,12 +19,12 @@ use Google_Service_YouTube;
  */
 class VideoAPIController extends Controller
 {
-    public function listVideosByCoordsAction(Request $request)
+    public function listVideosByCoordsAction($min_lat,$max_lat,$min_lng,$max_lng)
     {
         try {
             $videosInMap = $this->getDoctrine()
                 ->getRepository('KonaniVideoBundle:Video')
-                ->findVideosByCoordinates($request->get('min_lat'), $request->get('max_lat'), $request->get('min_lng'), $request->get('min_lat'));
+                ->findVideosByCoordinates($min_lat, $max_lat, $min_lng, $max_lng);
         } catch (NoResultException $e) {
             throw $this->createNotFoundException(
                 'No videos found in given coordinates'
@@ -35,9 +35,15 @@ class VideoAPIController extends Controller
         return $response;
     }
 
-    public function videoByIdAction(Request $request)
+    /**
+     * Returns information about specific video to map's infowindow
+     *
+     * @param $id
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function videoByIdAction($id)
     {
-        $id = $request->get('id');
         $my_client = $this->get('google_client');
         $client = $my_client->getGoogleClient();
         $youtube = new Google_Service_YouTube($client);
@@ -60,6 +66,14 @@ class VideoAPIController extends Controller
         return $response;
     }
 
+    /**
+     * Returns name and address of the closest google place to the specified coordinates
+     *
+     * @param $lat
+     * @param $lng
+     * @return JsonResponse
+     * @throws \Exception
+     */
     public function nearbyPlaceAction($lat,$lng)
     {
         $nearby_place = $this->get('google_client')->getNearbyPlace($lat,$lng);
@@ -68,6 +82,13 @@ class VideoAPIController extends Controller
         return $response;
     }
 
+    /**
+     * Forms an cleaner array of a video data
+     *
+     * @param $id
+     * @param $searchResponse
+     * @return array
+     */
     private function videoArrayFromResponseAction($id,$searchResponse)
     {
         $videoArray = [

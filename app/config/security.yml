@@ -11,24 +11,14 @@ security:
            id: fos_user.user_provider.username
 
     firewalls:
-    #    login:
-    #        pattern: ^/login$
-    #        anonymous:    true
-    #    register:
-    #        pattern: ^/register
-    #        anonymous:    true
-    #    forgot_password:
-    #        pattern: ^/resetting/request
-    #        anonymous:    true
-    #    forgot_password:
-    #        pattern: ^/resetting/send-email
-    #        anonymous:    true
         main:
             pattern: ^/
             anonymous: ~
             form_login:
                 provider: fos_userbundle
                 csrf_provider: form.csrf_provider
+            logout: ~
+
 
     access_control:
         - { path: ^/profile$, role: ROLE_USER }
