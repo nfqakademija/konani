@@ -22,12 +22,14 @@
                         <tr>
                             <th>Name</th>
                             <th>Description</th>
+                            <th>Tags</th>
                             <th>Actions</th>
                         </tr>
                     {% for video in uploadedVideos %}
                         <tr>
                             <td>{{ video.name }}</td>
                             <td>{{ video.description }}</td>
+                            <td>{{ video.tags }}</td>
                             <td>
                                 <a class="btn btn-success btn-sm" href="{{ path('video_upload_to_youtube', {'id': video.id}) }}" >
                                     <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Upload to Youtube

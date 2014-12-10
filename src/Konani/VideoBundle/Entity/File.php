@@ -37,11 +37,25 @@ class File
     private $name;
 
     /**
-     * @var string
+     * @var text
      *
-     * @ORM\Column(name="description", type="string", length=255)
+     * @ORM\Column(name="description", type="text")
      */
     private $description;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="category", type="string", length=255)
+     */
+    private $category;
+
+    /**
+     * @var text
+     *
+     * @ORM\Column(name="tags", type="text")
+     */
+    private $tags;
 
     /**
      * @var string
@@ -303,5 +317,52 @@ class File
     public function getUser()
     {
         return $this->user;
+    }
+
+
+    /**
+     * Set tags
+     *
+     * @param string $tags
+     * @return File
+     */
+    public function setTags($tags)
+    {
+        $this->tags = $tags;
+
+        return $this;
+    }
+
+    /**
+     * Get tags
+     *
+     * @return string 
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
+     * Set category
+     *
+     * @param string $category
+     * @return File
+     */
+    public function setCategory($category)
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * Get category
+     *
+     * @return string
+     */
+    public function getCategory()
+    {
+        return $this->category;
     }
 }

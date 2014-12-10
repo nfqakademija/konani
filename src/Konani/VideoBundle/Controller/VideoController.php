@@ -30,10 +30,28 @@ class VideoController extends Controller
      */
     public function uploadAction(Request $request)
     {
+        $my_client = $this->get('google_client');
+        $client = $my_client->getGoogleClient();
+        $youtube = new Google_Service_YouTube($client);
+        try {
+            $listCategories = $my_client->getVideoCategories($youtube);
+        } catch (Google_Service_Exception $e) {
+            throw $this->createAccessDeniedException("A service error occurred: ".htmlspecialchars($e->getMessage()));
+        } catch (Google_Exception $e) {
+            throw $this->createAccessDeniedException("An client error occurred: ".htmlspecialchars($e->getMessage()));
+        }
         $file = new File();
         $form = $this->createFormBuilder($file)
             ->add('name')
             ->add('description', 'textarea')
+            ->add('category','choice',array(
+                    'choices' => $listCategories
+                ))
+            ->add('tags', 'text', array(
+                    'attr' => array(
+                        'data-role'=> 'tagsinput'
+                    )
+                ))
             ->add('file')
             ->add('save','submit')
             ->getForm();

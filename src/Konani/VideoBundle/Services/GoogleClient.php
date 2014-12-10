@@ -15,6 +15,12 @@ use Google_Service_YouTube_Video;
 use Google_Http_MediaFileUpload;
 
 
+/**
+ * Class for requests and responses to/from Google API V3
+ *
+ * Class GoogleClient
+ * @package Konani\VideoBundle\Services
+ */
 class GoogleClient
 {
     protected $parameters;
@@ -37,6 +43,12 @@ class GoogleClient
         //$this->google_client->refreshToken("test_token");
     }
 
+    /**
+     * Checks if state from request is equal to state in the session, authenticates with google and saves access token to session
+     *
+     * @param $code
+     * @param $state
+     */
     public function authenticateToken($code, $state)
     {
         if (strval($this->session->get('state')) !== strval($state)) {
@@ -46,6 +58,9 @@ class GoogleClient
         $this->session->set('token', $this->google_client->getAccessToken());
     }
 
+    /**
+     * Resets google access token
+     */
     public function resetToken()
     {
         if ($this->session->get('token')) {
@@ -53,6 +68,11 @@ class GoogleClient
         }
     }
 
+    /**
+     * Returns an authentication with google URL
+     *
+     * @return string
+     */
     public function getAuthUrl()
     {
         $state = mt_rand();
@@ -86,31 +106,46 @@ class GoogleClient
         return false;
     }
 
+    /**
+     * @return Google_Client
+     */
     public function getGoogleClient()
     {
         return $this->google_client;
     }
 
     /**
-     * Create a snipet with title, description, tags and category id
-     * Numeric video category. See
-     * https://developers.google.com/youtube/v3/docs/videoCategories/list
+     * Create a snippet with title, description, tags and category id
+     *
      * @param $file
      * @return Google_Service_YouTube_VideoSnippet
      */
     public function createSnippet($file)
     {
         $snippet = new Google_Service_YouTube_VideoSnippet();
-        $snippet->setTitle($file->GetName());
-        $snippet->setDescription($file->GetDescription());
-        $snippet->setTags(array("Geolocation", "Fun", "Google", "Youtube"));
-        $snippet->setCategoryId("22");
-
+        $snippet->setTitle($file->getName());
+        $snippet->setDescription($file->getDescription());
+        $snippet->setTags($this->stringTagsToArray($file->getTags()));
+        $snippet->setCategoryId("".$file->getCategory()."");
+var_dump($snippet);
         return $snippet;
     }
 
     /**
+     * Converts tags from string to array without keys
+     *
+     * @param $tags
+     * @return array
+     */
+    private function stringTagsToArray($tags)
+    {
+        $tagsArray = explode(",",$tags);
+        return $tagsArray;
+    }
+
+    /**
      * Create a video status with privacy status. Options are "public", "private" and "unlisted".
+     *
      * @param $privacy
      * @return Google_Service_YouTube_VideoStatus
      */
@@ -124,6 +159,7 @@ class GoogleClient
 
     /**
      * Associate the snippet and status objects with a new video resource.
+     *
      * @param $snippet
      * @param $status
      * @return Google_Service_YouTube_Video
@@ -139,6 +175,7 @@ class GoogleClient
 
     /**
      * Uploads video to clients youtube channel
+     *
      * @param $file
      * @param $youtube
      * @return array
@@ -206,6 +243,31 @@ class GoogleClient
         return $return;
     }
 
+    /**
+     * Returns an array of youtube video categories for choice form fields
+     *
+     * @param $youtube
+     * @return array
+     */
+    public function getVideoCategories($youtube)
+    {
+        $return = array();
+        $videoCategories = $youtube->videoCategories->listVideoCategories('snippet', ['regionCode' => 'US']);
+        foreach ($videoCategories['items'] as $category) {
+            if ($category['snippet']['assignable']) {
+                $return[$category['id']] = $category['snippet']['title'];
+            }
+        }
+        return $return;
+    }
+
+    /**
+     * Returns information about provided videos array from youtube
+     *
+     * @param $repositoryVideos
+     * @param $youtube
+     * @return array
+     */
     public function getProvidedVideos($repositoryVideos, $youtube)
     {
         $mergedVideos = [];
@@ -229,6 +291,13 @@ class GoogleClient
         return $mergedVideos;
     }
 
+    /**
+     * Returns information about place closest to provided coordinates
+     *
+     * @param $lat
+     * @param $lng
+     * @return array|null
+     */
     private function getNearbyPlace($lat, $lng)
     {
         $json = sprintf(
@@ -246,6 +315,11 @@ class GoogleClient
         return null;
     }
 
+    /**
+     * Returns filter value for places to search
+     *
+     * @return string
+     */
     private function getPlacesTypes()
     {
         $types = "airport|amusement_park|aquarium|art_gallery|bakery|bank|bar|beauty_salon|bicycle_store|book_store|bowling_alley|bus_station|cafe|campground|car_dealer|car_rental|car_repair|car_wash|casino|cemetery|church|city_hall|clothing_store|convenience_store|courthouse|dentist|department_store|doctor|electrician|electronics_store|embassy|establishment|finance|fire_station|florist|food|funeral_home|furniture_store|gas_station|general_contractor|grocery_or_supermarket|gym|hair_care|hardware_store|health|hindu_temple|home_goods_store|hospital|insurance_agency|jewelry_store|laundry|lawyer|library|liquor_store|local_government_office|locksmith|lodging|meal_delivery|meal_takeaway|mosque|movie_rental|movie_theater|moving_company|museum|night_club|painter|park|parking|pet_store|pharmacy|physiotherapist|place_of_worship|plumber|police|post_office|real_estate_agency|restaurant|roofing_contractor|rv_park|school|shoe_store|shopping_mall|spa|stadium|storage|store|subway_station|synagogue|taxi_stand|train_station|travel_agency|university|veterinary_care|zoo";

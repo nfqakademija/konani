@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  * File Class for files Uploading ans saving in database
  *
  * @ORM\Table(name="file")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Konani\VideoBundle\Entity\FileRepository")
  * @ORM\HasLifecycleCallbacks
  */
 class File
@@ -37,6 +37,27 @@ class File
     private $name;
 
     /**
+     * @var text
+     *
+     * @ORM\Column(name="description", type="text")
+     */
+    private $description;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="category", type="string", length=255)
+     */
+    private $category;
+
+    /**
+     * @var text
+     *
+     * @ORM\Column(name="tags", type="text")
+     */
+    private $tags;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="path", type="text")
@@ -56,9 +77,12 @@ class File
      */
     protected $user;
 
-
     /**
-     * @Assert\File(maxSize="6000000")
+     * @Assert\File(maxSize="256000000",
+     *     mimeTypes = {"video/msvideo", "video/mp4", "video/mpeg", "video/x-ms-wmv", "video/quicktime", "video/avi", "video/x-flv", "video/3gpp", "application/x-mpegURL", "video/quicktime"},
+     *     maxSizeMessage = "The maximum allowed file size is 256MB.",
+     *     mimeTypesMessage = "Only the video files are allowed."
+     * )
      */
     private $file;
 
@@ -176,6 +200,29 @@ class File
     }
 
     /**
+     * Set description
+     *
+     * @param string $description
+     * @return Video
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
      * Set path
      *
      * @param string $path
@@ -247,5 +294,52 @@ class File
         // get rid of the __DIR__ so it doesn't screw up
         // when displaying uploaded doc/image in the view.
         return 'uploads';
+    }
+
+    /**
+     * Set user
+     *
+     * @param \Konani\UserBundle\Entity\User $user
+     * @return File
+     */
+    public function setUser(\Konani\UserBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \Konani\UserBundle\Entity\User 
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+
+    /**
+     * Set tags
+     *
+     * @param string $tags
+     * @return File
+     */
+    public function setTags($tags)
+    {
+        $this->tags = $tags;
+
+        return $this;
+    }
+
+    /**
+     * Get tags
+     *
+     * @return string 
+     */
+    public function getTags()
+    {
+        return $this->tags;
     }
 }

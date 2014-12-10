@@ -1,6 +1,15 @@
 {% extends '::base.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/bootstrap-tagsinput.css') }}" type="text/css" rel="stylesheet">
+{% endblock %}
+
 {% block body %}
     {{ form(form) }}
 {% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/bootstrap.tagsinput.js') }}"></script>
+{% endblock %}
