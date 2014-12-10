@@ -1,37 +1,37 @@
 video_upload:
-    path:     /upload/
+    path:     /profile/upload/
     defaults: { _controller: KonaniVideoBundle:Video:upload }
 
 video_upload_to_youtube:
-    path:     /upload_to_youtube/{id}
+    path:     /profile/upload_to_youtube/{id}
     defaults: { _controller: KonaniVideoBundle:Video:uploadToYoutube, id: null }
 
 video_uploaded:
-    path:     /uploaded/
+    path:     /profile/uploaded/
     defaults: { _controller: KonaniVideoBundle:Video:uploaded }
 
 video_delete_uploaded:
-    path:     /delete_uploaded/{id}
+    path:     /profile/delete_uploaded/{id}
     defaults: { _controller: KonaniVideoBundle:Video:deleteUploaded }
 
 video_delete_tagged:
-    path:     /delete_tagged/{id}
+    path:     /profile/delete_tagged/{id}
     defaults: { _controller: KonaniVideoBundle:Video:deleteTagged }
 
 video_authenticate_google:
-    path:     /authenticate_google/
+    path:     /profile/authenticate_google/
     defaults: { _controller: KonaniVideoBundle:Video:authenticateGoogle }
 
 video_upload_to_youtube_success:
-    path:     /upload_to_youtube_/success/
+    path:     /profile/upload_to_youtube_/success/
     defaults: { _controller: KonaniVideoBundle:Video:uploadToYoutubeSuccess }
 
 video_new_tag:
-    path:     /new_tag/
+    path:     /profile/new_tag/
     defaults: { _controller: KonaniVideoBundle:Video:newTag }
 
 video_tagged:
-    path:     /tagged/
+    path:     /profile/tagged/
     defaults: { _controller: KonaniVideoBundle:Video:tagged}
 
 video_page:
