@@ -202,7 +202,7 @@ class File
     /**
      * Set description
      *
-     * @param string $description
+     * @param text $description
      * @return Video
      */
     public function setDescription($description)
@@ -215,7 +215,7 @@ class File
     /**
      * Get description
      *
-     * @return string
+     * @return text
      */
     public function getDescription()
     {
@@ -323,7 +323,7 @@ class File
     /**
      * Set tags
      *
-     * @param string $tags
+     * @param text $tags
      * @return File
      */
     public function setTags($tags)
@@ -336,7 +336,7 @@ class File
     /**
      * Get tags
      *
-     * @return string 
+     * @return text
      */
     public function getTags()
     {

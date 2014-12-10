@@ -1,5 +1,9 @@
 {% extends '::base.html.twig' %}
 
+{% block header_block %}
+    {% include '::header_small.html.twig' %}
+{% endblock %}
+
 {% block stylesheets %}
     {{ parent() }}
     <link href="{{ asset('css/bootstrap-tagsinput.css') }}" type="text/css" rel="stylesheet">

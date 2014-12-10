@@ -117,41 +117,48 @@ class VideoController extends Controller
     }
 
     /**
+     * Deletes entities from specified repository
+     *
+     * @param $repo
+     * @param $search
+     * @return bool
+     */
+    public function deleteUserEntityAction($repo, $id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        try {
+            $entity = $this->getDoctrine()
+                ->getRepository($repo)
+                ->find(array(
+                        'id' => $id,
+                        'userId' => $this->getUser()->getId()
+                    ));
+        } catch (NoResultException $e) {
+            throw $this->createNotFoundException(
+                'No entities found for with given parameters'
+            );
+        }
+        $em->remove($entity);
+        $em->flush();
+        return true;
+    }
+
+    /**
      * Deletes video entity if exists
      * @param $id
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function deleteUploadedAction($id)
     {
-        $em = $this->getDoctrine()->getManager();
-        try {
-            $file = $this->getDoctrine()
-                ->getRepository('KonaniVideoBundle:File')
-                ->getOneByIdAndUserId($id, $this->getUser()->getId());
-        } catch (NoResultException $e) {
-            throw $this->createNotFoundException(
-                'No uploaded video found for id '.$id
-            );
-        }
-        $em->remove($file);
-        $em->flush();
+        $this->deleteUserEntityAction('KonaniVideoBundle:File',$id);
+        $this->get('session')->getFlashBag()->add('success', 'Uploaded video successfully deleted.');
         return $this->redirect($this->generateUrl('video_uploaded'));
     }
 
     public function deleteTaggedAction($id)
     {
-        $em = $this->getDoctrine()->getManager();
-        try {
-            $video = $this->getDoctrine()
-                ->getRepository('KonaniVideoBundle:Video')
-                ->find(['id'=>$id, 'userId'=>$this->getUser()->getId()]);
-        } catch (NoResultException $e) {
-            throw $this->createNotFoundException(
-                'No tagged video found for id '.$id
-            );
-        }
-        $em->remove($video);
-        $em->flush();
+        $this->deleteUserEntityAction('KonaniVideoBundle:Video',$id);
+        $this->get('session')->getFlashBag()->add('success', 'Map tag for video successfully deleted.');
         return $this->redirect($this->generateUrl('video_tagged'));
     }
 
@@ -206,7 +213,9 @@ class VideoController extends Controller
             } else {
                 $my_client->uploadVideo($file, $youtube);
                 $this->get('session')->set('token', $client->getAccessToken());
-                return $this->redirect($this->generateUrl('video_delete_uploaded', ['id' => $id]));
+                $this->deleteUserEntityAction('KonaniVideoBundle:File',$id);
+                $this->get('session')->getFlashBag()->add('success', 'Video successfully uploaded to Youtube.');
+                return $this->redirect($this->generateUrl('video_uploaded'));
             }
         } catch (Google_Service_Exception $e) {
             throw $this->createAccessDeniedException("A service error occurred: ".htmlspecialchars($e->getMessage()));

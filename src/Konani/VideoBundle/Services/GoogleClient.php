@@ -126,8 +126,7 @@ class GoogleClient
         $snippet->setTitle($file->getName());
         $snippet->setDescription($file->getDescription());
         $snippet->setTags($this->stringTagsToArray($file->getTags()));
-        $snippet->setCategoryId("".$file->getCategory()."");
-var_dump($snippet);
+        $snippet->setCategoryId($file->getCategory());
         return $snippet;
     }
 

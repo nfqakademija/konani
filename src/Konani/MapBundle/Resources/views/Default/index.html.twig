@@ -1,5 +1,9 @@
 {% extends '::base.html.twig' %}
 
+{% block header_block %}
+    {% include '::header_small.html.twig' %}
+{% endblock %}
+
 {% block body %}
     {% include 'KonaniMapBundle:Default:maps.html.twig' %}
 {% endblock %}
