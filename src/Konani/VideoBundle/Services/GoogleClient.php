@@ -318,6 +318,12 @@ class GoogleClient
         return null;
     }
 
+    /**
+     * Returns comma separated list of youtube video ID's
+     *
+     * @param $repositoryVideos
+     * @return string
+     */
     private function getVideoIdString($repositoryVideos)
     {
         $videosIdString = "";

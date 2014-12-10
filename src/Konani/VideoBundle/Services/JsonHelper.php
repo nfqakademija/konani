@@ -2,10 +2,22 @@
 
 namespace Konani\VideoBundle\Services;
 
+/**
+ * Generates arrays for JSON
+ *
+ * Class JsonHelper
+ * @package Konani\VideoBundle\Services
+ */
 class JsonHelper
 {
     protected $parameters;
 
+    /**
+     * Returns video geotags array for map
+     *
+     * @param $videos
+     * @return array
+     */
     public function createMarkers($videos)
     {
         $videosArray = array();

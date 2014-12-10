@@ -68,6 +68,12 @@ class VideoController extends Controller
         ));
     }
 
+    /**
+     * Shows video player and map
+     *
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function showAction($id)
     {
         $my_client = $this->get('google_client');
@@ -145,6 +151,7 @@ class VideoController extends Controller
 
     /**
      * Deletes video entity if exists
+     *
      * @param $id
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
@@ -155,6 +162,12 @@ class VideoController extends Controller
         return $this->redirect($this->generateUrl('video_uploaded'));
     }
 
+    /**
+     * Deletes video geotag
+     *
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
     public function deleteTaggedAction($id)
     {
         $this->deleteUserEntityAction('KonaniVideoBundle:Video',$id);
@@ -164,6 +177,7 @@ class VideoController extends Controller
 
     /**
      * Authenticates client and redirects if gets right parametes / otherwise provides authentication link
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function authenticateGoogleAction()
@@ -194,6 +208,7 @@ class VideoController extends Controller
 
     /**
      * Uploads video to clients youtube channel
+     *
      * @param $id
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
@@ -224,10 +239,15 @@ class VideoController extends Controller
         }
     }
 
+    /**
+     * Map and form for a new video tag
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function newTagAction(Request $request)
     {
-        //$ip = $this->get('request')->getClientIp();
-        $ip = "86.38.9.252";
+        $ip = $this->get('request')->getClientIp();
         $my_client = $this->get('google_client');
         $client = $my_client->getGoogleClient();
         $my_client->resetToken();

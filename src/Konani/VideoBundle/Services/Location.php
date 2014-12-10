@@ -2,6 +2,12 @@
 
 namespace Konani\VideoBundle\Services;
 
+/**
+ * User location
+ *
+ * Class Location
+ * @package Konani\VideoBundle\Services
+ */
 class Location
 {
     private $ip;
@@ -11,6 +17,12 @@ class Location
     public $lat;
     public $lng;
 
+    /**
+     * Returns inf about clients location
+     *
+     * @param $ip
+     * @return $this
+     */
     public function getMyLocation($ip)
     {
         $this->ip = $ip;
