@@ -214,7 +214,7 @@ class VideoController extends Controller
                 $my_client->uploadVideo($file, $youtube);
                 $this->get('session')->set('token', $client->getAccessToken());
                 $this->deleteUserEntityAction('KonaniVideoBundle:File',$id);
-                $this->get('session')->getFlashBag()->add('success', 'Video successfully uploaded to Youtube.');
+                $this->get('session')->getFlashBag()->add('success', sprintf('Video "%s" successfully uploaded to Youtube.',$file->getName()));
                 return $this->redirect($this->generateUrl('video_uploaded'));
             }
         } catch (Google_Service_Exception $e) {

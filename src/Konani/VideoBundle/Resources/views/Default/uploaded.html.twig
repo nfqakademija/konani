@@ -31,7 +31,7 @@
                             <td>{{ video.description }}</td>
                             <td>{{ video.tags }}</td>
                             <td>
-                                <a class="btn btn-success btn-sm" href="{{ path('video_upload_to_youtube', {'id': video.id}) }}" >
+                                <a class="btn btn-success btn-sm upload" href="{{ path('video_upload_to_youtube', {'id': video.id}) }}" >
                                     <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> Upload to Youtube
                                 </a>
                                 <a class="btn btn-danger btn-sm" href="{{ path('video_delete_uploaded', {'id': video.id}) }}" >
@@ -48,4 +48,15 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.upload').click(function () {
+                $(this).children('span.glyphicon').removeClass('glyphicon-share-alt').addClass('glyphicon-refresh glyphicon-refresh-animate');
+            });
+        });
+    </script>
 {% endblock %}
