@@ -13,7 +13,7 @@ class DefaultController extends Controller
         $ip = $this->get('request')->getClientIp();
         $mergedVideos = [];
         if ($location = $this->get('location')->getMyLocation($ip)) {
-            $repositoryVideos = $this->getDoctrine()->getRepository('KonaniVideoBundle:Video')->findClosestVideos($location->lat,$location->lng,6);
+            $repositoryVideos = $this->getDoctrine()->getRepository('KonaniVideoBundle:Video')->findClosestVideos($location->getLat(),$location->getLng(),6);
             $my_client = $this->get('google_client');
             $client = $my_client->getGoogleClient();
             $youtube = new Google_Service_YouTube($client);
@@ -22,8 +22,7 @@ class DefaultController extends Controller
             }
             return $this->render('FrontendBundle:Default:index.html.twig',
                 [
-                    'city' => $location->city,
-                    'region' => $location->region,
+                    'location' => $location,
                     'videos' => $mergedVideos,
                 ]
             );

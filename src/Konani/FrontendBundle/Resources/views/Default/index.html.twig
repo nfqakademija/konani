@@ -2,8 +2,8 @@
 
 {% block body %}
     <div class="container video-grid">
-        {% if city %}
-            <h1>Videos near your location {{ city }}, {{ region }}</h1>
+        {% if location.found %}
+            <h1>Videos near your location {% if location.city  %}{{ location.city }}{% endif %}{% if location.region  %}, {{ location.region }}{% endif %}{% if location.city  %}, {{ location.country }}{% endif %}</h1>
             {% if videos|length > 0 %}
             <ul class="medium-block-grid-2 small-block-grid-1 large-block-grid-3">
                 {% for id, video in videos %}
