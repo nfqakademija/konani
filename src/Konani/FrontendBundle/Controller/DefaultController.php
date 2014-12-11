@@ -24,9 +24,12 @@ class DefaultController extends Controller
                 [
                     'location' => $location,
                     'videos' => $mergedVideos,
+                    'ip' => $ip,
                 ]
             );
         }
-        return $this->render('FrontendBundle:Default:index.html.twig');
+        return $this->render('FrontendBundle:Default:index.html.twig', [
+                'ip' => $ip,
+            ]);
     }
 }
