@@ -10,7 +10,9 @@ class DefaultController extends Controller
 {
     public function indexAction()
     {
-        $ip = $this->get('request')->getClientIp();
+        $ip = $this->get('request')->server->get('HTTP_X_REAL_IP');
+        //$ip = $this->get('request')->getClientIp();
+
         $mergedVideos = [];
         if ($location = $this->get('location')->getMyLocation($ip)) {
             $repositoryVideos = $this->getDoctrine()->getRepository('KonaniVideoBundle:Video')->findClosestVideos($location->getLat(),$location->getLng(),6);
