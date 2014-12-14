@@ -56,16 +56,31 @@ class VideoController extends Controller
             ->add('save','submit')
             ->getForm();
         $form->handleRequest($request);
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $file->setUser($this->getUser());
-            $em->persist($file);
-            $em->flush();
+        if ( $this->formToDBAction($form, $file) ) {
             return $this->redirect($this->generateUrl('video_uploaded'));
         }
         return $this->render('KonaniVideoBundle:Default:upload.html.twig', array(
             'form' => $form->createView(),
         ));
+    }
+
+    /**
+     * Handles form submission
+     *
+     * @param $form
+     * @param $entity
+     * @return bool|\Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function formToDBAction($form, $entity)
+    {
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $entity->setUser($this->getUser());
+            $em->persist($entity);
+            $em->flush();
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -247,7 +262,7 @@ class VideoController extends Controller
      */
     public function newTagAction(Request $request)
     {
-        $ip = $this->get('request')->server->get('HTTP_X_REAL_IP');
+        $ip = $this->get('request')->server->get('HTTP_X_REAL_IP'); //$ip = "85.206.23.13";
         $my_client = $this->get('google_client');
         $client = $my_client->getGoogleClient();
         $my_client->resetToken();
@@ -277,11 +292,7 @@ class VideoController extends Controller
             ->add('save','submit')
             ->getForm();
         $form->handleRequest($request);
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $video->setUser($this->getUser());
-            $em->persist($video);
-            $em->flush();
+        if ( $this->formToDBAction($form, $video) ) {
             return $this->redirect($this->generateUrl('video_tagged'));
         }
         $this->get('session')->set('token', $client->getAccessToken());
