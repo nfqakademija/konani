@@ -5,9 +5,12 @@ services:
       tags:
          - { name: serializer.normalizer }
 
+    array_search:
+        class: Konani\VideoBundle\Services\ArraySearch
+
     google_client:
         class: Konani\VideoBundle\Services\GoogleClient
-        arguments: [%google_api%, @router, @session, @serializer.encoder.json]
+        arguments: [%google_api%, @router, @session, @serializer.encoder.json, @array_search]
 
     json_helper:
         class: Konani\VideoBundle\Services\JsonHelper

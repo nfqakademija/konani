@@ -6,6 +6,7 @@ use Symfony\Component\Routing\Router;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Konani\VideoBundle\Services\ArraySearch;
 
 use Google_Client;
 
@@ -27,12 +28,14 @@ class GoogleClient
     protected $session;
     protected $google_client;
     protected $jsonEncoder;
+    protected $arraySearch;
 
-    public function __construct($parameters, Router $router, Session $session, JsonEncoder $jsonEncoder)
+    public function __construct($parameters, Router $router, Session $session, JsonEncoder $jsonEncoder, ArraySearch $arraySearch)
     {
         $this->parameters = $parameters;
         $this->session = $session;
         $this->jsonEncoder = $jsonEncoder;
+        $this->arraySearch = $arraySearch;
 
         $this->google_client = new Google_Client();
         $this->google_client->setClientId($parameters['client_id']);
@@ -292,7 +295,7 @@ class GoogleClient
     {
         $mergedVideos = [];
         foreach ($repositoryVideos as $repositoryVideo) {
-            $searchKey = $this->searchArray($searchResponse['items'], 'id', $repositoryVideo->getYoutubeId());
+            $searchKey = $this->arraySearch->search($searchResponse['items'], 'id', $repositoryVideo->getYoutubeId());
             if ($searchKey !== false) {
                 $mergedVideos[$repositoryVideo->getId()]['youtube'] = $searchResponse['items'][$searchKey];
             } else {
@@ -301,26 +304,7 @@ class GoogleClient
             $mergedVideos[$repositoryVideo->getId()]['location']['lat'] = $repositoryVideo->getLatitude();
             $mergedVideos[$repositoryVideo->getId()]['location']['lng'] = $repositoryVideo->getLongitude();
         }
-        //print_r($mergedVideos);
         return $mergedVideos;
-    }
-
-    /**
-     * Searches for a value of specified field and returns it's key if found or false if not found
-     *
-     * @param $videos
-     * @param $field
-     * @param $value
-     * @return bool|int|string
-     */
-    private function searchArray($videos, $field, $value)
-    {
-        foreach($videos as $key => $video) {
-            if ( $video[$field] === $value ) {
-                return $key;
-            }
-        }
-        return false;
     }
 
     /**
