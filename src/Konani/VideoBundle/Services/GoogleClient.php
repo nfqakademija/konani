@@ -269,7 +269,6 @@ class GoogleClient
      */
     public function getProvidedVideos($repositoryVideos, $youtube)
     {
-        $mergedVideos = [];
         $searchResponse = $youtube->videos->listVideos(
             'snippet',
             [
@@ -277,21 +276,72 @@ class GoogleClient
                 'maxResults' => 6,
             ]
         );
-        $key = 0;
+        //print_r($searchResponse['items']);
+        $mergedVideos = $this->mergeVideos($repositoryVideos, $searchResponse);
+        return $mergedVideos;
+    }
+
+    /**
+     * Merges video data from repository with video data from Youtube API
+     *
+     * @param $repositoryVideos
+     * @param $searchResponse
+     * @return array
+     */
+    private function mergeVideos($repositoryVideos, $searchResponse)
+    {
+        $mergedVideos = [];
         foreach ($repositoryVideos as $repositoryVideo) {
-            if (isset($searchResponse['items'][$key])) {
-                $mergedVideos[$repositoryVideo->getId()]['youtube'] = $searchResponse['items'][$key];
+            $searchKey = $this->searchArray($searchResponse['items'], 'id', $repositoryVideo->getYoutubeId());
+            if ($searchKey !== false) {
+                $mergedVideos[$repositoryVideo->getId()]['youtube'] = $searchResponse['items'][$searchKey];
             } else {
-                $mergedVideos[$repositoryVideo->getId()]['youtube']['snippet']['title'] = 'Video not found';
-                $mergedVideos[$repositoryVideo->getId()]['youtube']['snippet']['thumbnails']['medium']['url'] = 'http://i.ytimg.com/vi/QfgoDDh4kE0/maxresdefault.jpg';
-                $mergedVideos[$repositoryVideo->getId()]['youtube']['snippet']['thumbnails']['medium']['height'] = '180';
-                $mergedVideos[$repositoryVideo->getId()]['youtube']['snippet']['thumbnails']['medium']['width'] = '320';
+                $mergedVideos[$repositoryVideo->getId()]['youtube'] = $this->createNotFoundThumbnail();
             }
             $mergedVideos[$repositoryVideo->getId()]['location']['lat'] = $repositoryVideo->getLatitude();
             $mergedVideos[$repositoryVideo->getId()]['location']['lng'] = $repositoryVideo->getLongitude();
-            $key++;
         }
+        //print_r($mergedVideos);
         return $mergedVideos;
+    }
+
+    /**
+     * Searches for a value of specified field and returns it's key if found or false if not found
+     *
+     * @param $videos
+     * @param $field
+     * @param $value
+     * @return bool|int|string
+     */
+    private function searchArray($videos, $field, $value)
+    {
+        foreach($videos as $key => $video) {
+            if ( $video[$field] === $value ) {
+                return $key;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns a not found thumbnail array
+     *
+     * @return array
+     */
+    private function createNotFoundThumbnail()
+    {
+        return array(
+          'snippet' => array(
+              'title' => 'Video not found',
+              'thumbnails' => array (
+                  'medium' => array (
+                      'url' => 'http://i.ytimg.com/vi/QfgoDDh4kE0/maxresdefault.jpg',
+                      'height' => '180',
+                      'width' => '320'
+                  )
+              )
+          )
+        );
     }
 
     /**

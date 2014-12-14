@@ -247,7 +247,7 @@ class VideoController extends Controller
      */
     public function newTagAction(Request $request)
     {
-        $ip = $this->get('request')->getClientIp();
+        $ip = $this->get('request')->server->get('HTTP_X_REAL_IP');
         $my_client = $this->get('google_client');
         $client = $my_client->getGoogleClient();
         $my_client->resetToken();

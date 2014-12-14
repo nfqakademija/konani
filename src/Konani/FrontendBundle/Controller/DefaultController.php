@@ -10,9 +10,7 @@ class DefaultController extends Controller
 {
     public function indexAction()
     {
-        $ip = $this->get('request')->server->get('HTTP_X_REAL_IP');
-        //$ip = $this->get('request')->getClientIp();
-
+        $ip = $this->get('request')->server->get('HTTP_X_REAL_IP'); $ip = "85.206.23.13";
         $mergedVideos = [];
         if ($location = $this->get('location')->getMyLocation($ip)) {
             $repositoryVideos = $this->getDoctrine()->getRepository('KonaniVideoBundle:Video')->findClosestVideos($location->getLat(),$location->getLng(),6);
@@ -25,13 +23,10 @@ class DefaultController extends Controller
             return $this->render('FrontendBundle:Default:index.html.twig',
                 [
                     'location' => $location,
-                    'videos' => $mergedVideos,
-                    'ip' => $ip,
+                    'videos' => $mergedVideos
                 ]
             );
         }
-        return $this->render('FrontendBundle:Default:index.html.twig', [
-                'ip' => $ip,
-            ]);
+        return $this->render('FrontendBundle:Default:index.html.twig');
     }
 }
